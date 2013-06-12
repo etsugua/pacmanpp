@@ -101,11 +101,17 @@ public class World extends JPanel
 							p.setPosition(i,j);
 						else if (type == Constants.GHOST)
 						{
-							Util.simpleTrace("TODO - Do the proper loading of the ghost");
+							// create the ghost
 							Ghost g = new Ghost();
 							g.setPosition(i, j);
 							ghosts.add(g);
 							this.add(g);
+							// create the thread
+							Ghost_AI gai = new Ghost_AI(g);
+							Thread t_gai = new Thread(gai);
+							ghost_ai.add(t_gai);
+							t_gai.start();
+							Util.simpleTrace("Created T_G_AI");
 						}
 							
 					}
@@ -225,10 +231,7 @@ public class World extends JPanel
 						ghost.update_sprite();
 						break;
 					default:
-						Ghost_AI gai = new Ghost_AI(ghost);
-						Thread t_gai = new Thread(gai);
-						ghost_ai.add(t_gai);
-						t_gai.start();
+						ghost.setMustThink(true);
 				}
 			}
 		}

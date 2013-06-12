@@ -20,6 +20,9 @@ public class Ghost extends MovableEntity
 	// holds the world tile type - for marking
 	protected int tile_type;
 	
+	// flag used for the threaded update
+	protected boolean must_think;
+	
 	/******************************************
 	 * 
 	 * Initialization Methods
@@ -27,6 +30,8 @@ public class Ghost extends MovableEntity
 	 ******************************************/
 	public Ghost()
 	{
+		
+		must_think = false;
 	
 		sprite_index = 0;
 		
@@ -55,6 +60,15 @@ public class Ghost extends MovableEntity
 		position_y = y;
 	}
 	
+	public boolean getMustThink()
+	{
+		return must_think;
+	}
+	
+	public void setMustThink(boolean b)
+	{
+		must_think = b;
+	}
 	
 	/******************************************
 	 * 
