@@ -22,6 +22,9 @@ public class GameImages
 	// world
 	private Image world;
 	
+	// nomnoms
+	private Image [] nomnoms;
+	
 	// info options
 	private Image [] optionSprites;
 	
@@ -85,6 +88,11 @@ public class GameImages
 			// load the world sprite
 			world = ImageIO.read(new File("resources/imgs/map/world.png"));
 			
+			// load the nomnoms sprites
+			nomnoms = new Image[2];
+			nomnoms[0] = ImageIO.read(new File("resources/imgs/general/nomnom.png"));
+			nomnoms[1] = ImageIO.read(new File("resources/imgs/general/nomnomCrystal.png"));
+			
 			// load the option sprites
 			optionSprites = new Image [4];
 			optionSprites[Constants.RESET_GAME] = ImageIO.read(new File("resources/imgs/system/newgame.png"));
@@ -119,6 +127,11 @@ public class GameImages
 	protected Image getWorldSprite ()
 	{
 		return world;
+	}
+	
+	protected Image [] getNomNomSprites()
+	{
+		return nomnoms;
 	}
 	
 	protected Image [] getOptionSprites ()

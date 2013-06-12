@@ -111,7 +111,6 @@ public class World extends JPanel
 							Thread t_gai = new Thread(gai);
 							ghost_ai.add(t_gai);
 							t_gai.start();
-							Util.simpleTrace("Created T_G_AI");
 						}
 							
 					}
@@ -309,6 +308,12 @@ public class World extends JPanel
 		// paint the world
 		g.drawImage(gim.getWorldSprite(), 0, 0, null);
 		// paint the nomnoms
+		for (int i = 0; i < Constants.WORLD_WIDTH; i++)
+			for (int j = 0; j < Constants.WORLD_HEIGHT; j++)
+			{
+				if (nomnoms[j][i])
+					g.drawImage(gim.getNomNomSprites()[0], Util.convertPosition(i), Util.convertPosition(j), instance);
+			}
 		//Util.simpleTrace("Paint NomNoms");
 		
 		// paint the pacman

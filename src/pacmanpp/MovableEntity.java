@@ -51,12 +51,7 @@ public abstract class MovableEntity extends JComponent
 			position_x -= Constants.WORLD_WIDTH;
 	}
 	
-	// position conversion - from map view to world view
-	protected int convertPosition(int index)
-	{
-		int retValue = (index + 1) * Constants.GRID_UNIT;
-		return retValue;
-	}
+	
 	
 	// checks if a defined direction is free to move or not
 		// must be implemented in below classes as it may
