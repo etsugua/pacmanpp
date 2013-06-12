@@ -33,10 +33,10 @@ public class Ghost_AI implements Runnable
 				int state = ghost.getGhostState();
 
 					// this ghost is NOT blue
-<<<<<<< HEAD
+
 				if (state < Constants.BLUE)
 				{
-					int direction = ghost.s_see_pacman() ;
+					int direction = ghost.s_see_pacman();
 					if (direction != 0)
 					{
 						// if energy for split
@@ -45,36 +45,26 @@ public class Ghost_AI implements Runnable
 							// shot - update sprite
 						// else
 							// move pacman direction - update sprite
-							
-					if (state < Constants.BLUE)
-					{
-						if (ghost.s_see_pacman() != 0)
-						{
-							// if energy for split
-								// split - move pacman direction - update sprite
-							// else if energy for shot
-								// shot - update sprite
+					}
+
+					// else if see ghost
+						// if that ghost is blue
+							// if distance > 1
+								// move towards ghost
 							// else
-								// move pacman direction - update sprite
-						}
+								// call for join
+						// if that ghost is close to blue and this one can shoot
+							// shoot once - update sprite (MUST HAVE SHOOT TIMER!)
+						// if that ghost is energy good and this one is close to blue
+							// wait for him - update sprite
 
-						// else if see ghost
-							// if that ghost is blue
-								// if distance > 1
-									// move towards ghost
-								// else
-									// call for join
-							// if that ghost is close to blue and this one can shoot
-								// shoot once - update sprite (MUST HAVE SHOOT TIMER!)
-							// if that ghost is energy good and this one is close to blue
-								// wait for him - update sprite
-
-						else
-						{
-							ghost.update_direction();
-							ghost.update_position();
-							ghost.update_sprite();
-						}
+					else
+					{
+						ghost.update_direction();
+						ghost.update_position();
+						ghost.update_sprite();
+					}
+				}
 
 					// this ghost is blue
 				else
@@ -100,7 +90,7 @@ public class Ghost_AI implements Runnable
 					Util.simpleTrace(""+ex);
 				}
 			}
-			
 		}
-    }
+	}
 }
+

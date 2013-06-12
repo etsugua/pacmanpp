@@ -39,7 +39,7 @@ public class Ghost extends MovableEntity
 		sprite_index = 0;
 		
 		this.current_state = Constants.SPAWN;
-                this.current_energy = Constants.START_ENERGY;
+                this.current_energy = Constants.INIT_ENERGY;
 		
 		// initialization of the movement direction
 		this.current_direction = 0;
@@ -62,6 +62,11 @@ public class Ghost extends MovableEntity
 	{
 		position_x = x;
 		position_y = y;
+	}
+	
+	public void setEnergy(int energy)
+	{
+		this.current_energy = energy;
 	}
 	
 	public boolean getMustThink()
