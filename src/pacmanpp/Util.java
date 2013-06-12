@@ -30,4 +30,11 @@ public class Util
 		double rand = Math.random()*100;
 		return (int)(rand%limit);
 	}
+	
+	// position conversion - from map view to world view
+	protected static int convertPosition(int index)
+	{
+		int retValue = (index + 1) * Constants.GRID_UNIT;
+		return retValue;
+	}
 }

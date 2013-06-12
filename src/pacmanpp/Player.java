@@ -149,6 +149,6 @@ public class Player extends MovableEntity
 	
 	public void paint(Graphics g)
 	{
-		g.drawImage(this.sprites[this.current_direction][this.sprite_index], convertPosition(position_x), convertPosition(position_y), null);
+		g.drawImage(this.sprites[this.current_direction][this.sprite_index], Util.convertPosition(position_x), Util.convertPosition(position_y), null);
 	}
 }

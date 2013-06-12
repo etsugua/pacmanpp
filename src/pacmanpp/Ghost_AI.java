@@ -28,8 +28,7 @@ public class Ghost_AI implements Runnable
 		
 		while (true)
 		{
-			
-			if(ghost.getMustThink()) 
+			if(ghost.getMustThink())
 			{
 				int direction = ghost.s_see_pacman() ;
 				
