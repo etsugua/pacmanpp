@@ -19,6 +19,9 @@ public class GameImages
 	private Image [][] pacmanSprites;
 	private Image [][] ghostSprites;
 	
+	// shot
+	private Image shotSprite;
+	
 	// world
 	private Image world;
 	
@@ -35,19 +38,19 @@ public class GameImages
 			// load the pacman sprites
 			pacmanSprites = new Image[5][3];
 			
-				//UP
+			//UP
 			pacmanSprites[Constants.UP][0] = ImageIO.read(new File("resources/imgs/pacman/pacman_closed.png"));
 			pacmanSprites[Constants.UP][1] = ImageIO.read(new File("resources/imgs/pacman/pacman_up_0.png"));
 			pacmanSprites[Constants.UP][2] = ImageIO.read(new File("resources/imgs/pacman/pacman_up_1.png"));
-				//DOWN
+			//DOWN
 			pacmanSprites[Constants.DOWN][0] = ImageIO.read(new File("resources/imgs/pacman/pacman_closed.png"));
 			pacmanSprites[Constants.DOWN][1] = ImageIO.read(new File("resources/imgs/pacman/pacman_down_0.png"));
 			pacmanSprites[Constants.DOWN][2] = ImageIO.read(new File("resources/imgs/pacman/pacman_down_1.png"));
-				//LEFT
+			//LEFT
 			pacmanSprites[Constants.LEFT][0] = ImageIO.read(new File("resources/imgs/pacman/pacman_closed.png"));
 			pacmanSprites[Constants.LEFT][1] = ImageIO.read(new File("resources/imgs/pacman/pacman_left_0.png"));
 			pacmanSprites[Constants.LEFT][2] = ImageIO.read(new File("resources/imgs/pacman/pacman_left_1.png"));
-				//RIGHT
+			//RIGHT
 			pacmanSprites[Constants.RIGHT][0] = ImageIO.read(new File("resources/imgs/pacman/pacman_closed.png"));
 			pacmanSprites[Constants.RIGHT][1] = ImageIO.read(new File("resources/imgs/pacman/pacman_right_0.png"));
 			pacmanSprites[Constants.RIGHT][2] = ImageIO.read(new File("resources/imgs/pacman/pacman_right_1.png"));
@@ -57,16 +60,16 @@ public class GameImages
 			ghostSprites[Constants.SPAWN][0] = ImageIO.read(new File("resources/imgs/ghost/split/ghost_split_0.png"));
 			ghostSprites[Constants.SPAWN][1] = ImageIO.read(new File("resources/imgs/ghost/split/ghost_split_1.png"));
 			ghostSprites[Constants.SPAWN][2] = ImageIO.read(new File("resources/imgs/ghost/split/ghost_split_2.png"));
-				//UP
+			//UP
 			ghostSprites[Constants.NORMAL_UP][0] = ImageIO.read(new File("resources/imgs/ghost/normal/ghost_move_up_0.png"));
 			ghostSprites[Constants.NORMAL_UP][1] = ImageIO.read(new File("resources/imgs/ghost/normal/ghost_move_up_1.png"));
-				//DOWN
+			//DOWN
 			ghostSprites[Constants.NORMAL_DOWN][0] = ImageIO.read(new File("resources/imgs/ghost/normal/ghost_move_down_0.png"));
 			ghostSprites[Constants.NORMAL_DOWN][1] = ImageIO.read(new File("resources/imgs/ghost/normal/ghost_move_down_1.png"));
-				//LEFT
+			//LEFT
 			ghostSprites[Constants.NORMAL_LEFT][0] = ImageIO.read(new File("resources/imgs/ghost/normal/ghost_move_left_0.png"));
 			ghostSprites[Constants.NORMAL_LEFT][1] = ImageIO.read(new File("resources/imgs/ghost/normal/ghost_move_left_1.png"));
-				//RIGHT
+			//RIGHT
 			ghostSprites[Constants.NORMAL_RIGHT][0] = ImageIO.read(new File("resources/imgs/ghost/normal/ghost_move_right_0.png"));
 			ghostSprites[Constants.NORMAL_RIGHT][1] = ImageIO.read(new File("resources/imgs/ghost/normal/ghost_move_right_1.png"));
 			
@@ -92,6 +95,9 @@ public class GameImages
 			optionSprites[Constants.UNMUTE] = ImageIO.read(new File("resources/imgs/system/sound_off.png"));
 			optionSprites[Constants.EXIT] = ImageIO.read(new File("resources/imgs/system/exit.png"));
 			
+			// load the shot sprite
+			shotSprite = ImageIO.read(new File("resources/imgs/general/shot.png"));
+			
 		}
 		catch (Exception ex)
 		{
@@ -114,6 +120,10 @@ public class GameImages
 	protected Image[][] getGhostSprites ()
 	{
 		return ghostSprites;
+	}
+	
+	protected Image getShotSprite() {
+		return shotSprite;
 	}
 	
 	protected Image getWorldSprite ()

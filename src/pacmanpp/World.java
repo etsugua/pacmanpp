@@ -323,4 +323,17 @@ public class World extends JPanel
 		// paint the shots?
 		//Util.simpleTrace("Paint Shots?");
 	}
+
+	void destroyCrystal(int newx, int newy) {
+		Util.simpleTrace("TO DO AUGUSTE");
+	}
+
+	void incGhostEnergy(int newx, int newy) {
+		Util.simpleTrace("TO DO AUGUSTE");
+	}
+
+	void hitPacman() {
+		Util.simpleTrace("TO DO AUGUSTE");
+	}
+
 }

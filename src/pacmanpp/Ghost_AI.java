@@ -38,10 +38,10 @@ public class Ghost_AI implements Runnable
 
 					int state = ghost.getGhostState();
 
-						// this ghost is NOT blue
+					// this ghost is NOT blue
 					if (state < Constants.BLUE)
 					{
-						if (ghost.s_see_pacman())
+						if (ghost.s_see_pacman() != 0)
 						{
 							// if energy for split
 								// split - move pacman direction - update sprite
