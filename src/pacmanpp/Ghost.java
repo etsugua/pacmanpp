@@ -22,6 +22,9 @@ public class Ghost extends MovableEntity
 	
 	// flag used for the threaded update
 	protected boolean must_think;
+        
+    // ghost energy
+    protected int current_energy;
 	
 	/******************************************
 	 * 
@@ -36,6 +39,7 @@ public class Ghost extends MovableEntity
 		sprite_index = 0;
 		
 		this.current_state = Constants.SPAWN;
+                this.current_energy = Constants.START_ENERGY;
 		
 		// initialization of the movement direction
 		this.current_direction = 0;
@@ -286,11 +290,13 @@ public class Ghost extends MovableEntity
                     break;
         }
 		
-		tile_type = World.getInstance().updateGhostPosition(newx, newy, position_x, position_y, tile_type);
+            tile_type = World.getInstance().updateGhostPosition(newx, newy, position_x, position_y, tile_type);
 		
-        position_x = newx;
-        position_y = newy;
-	}
+            position_x = newx;
+            position_y = newy;
+			
+			this.current_energy--;
+        }
 	
 	@Override
 	public void paint(Graphics g)

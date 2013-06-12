@@ -44,9 +44,9 @@ public class Constants
 	protected static final int SHOT = 8;
 	
 	// directions
-    protected static final int UP = 1;
-    protected static final int DOWN = 2;
-    protected static final int LEFT = 3;
+	protected static final int UP = 1;
+	protected static final int DOWN = 2;
+	protected static final int LEFT = 3;
     protected static final int RIGHT = 4;
 	
 	// ghost state
@@ -59,5 +59,10 @@ public class Constants
 	protected static final int JOIN = 6;
 	
 	// ghost energy
-	protected static final int SPLIT_ENERGY = 40;
+	protected static final int INIT_ENERGY = 100;
+	protected static final int SPLIT_INIT_ENERGY = 40;
+	protected static final int SPLIT_ENERGY = 50;
+	protected static final int SHOT_ENERGY = 1;
+	protected static final int SHOOT_PACMAN_ENERGY = 1; //necessary energy to shoot
+	protected static final int SHOOT_GHOST_ENERGY = 10; //necessary energy to shoot
 }
