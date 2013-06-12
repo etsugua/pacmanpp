@@ -40,6 +40,8 @@ public class Constants
 	protected static final int GHOST = 4;
 	protected static final int GHOST_DOOR = 5;
 	protected static final int SPEC_FLOOR = 6;
+	protected static final int GHOST_BLUE = 7;
+	protected static final int SHOT = 8;
 	
 	// directions
     protected static final int UP = 1;
@@ -55,4 +57,7 @@ public class Constants
 	protected static final int NORMAL_RIGHT = 4;
 	protected static final int BLUE = 5;
 	protected static final int JOIN = 6;
+	
+	// ghost energy
+	protected static final int SPLIT_ENERGY = 40;
 }

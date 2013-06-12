@@ -127,6 +127,21 @@ public class World extends JPanel
 		}
 	}
 	
+	public void spawnGhost(int x, int y, int energy)
+	{
+		// create the ghost
+		Ghost g = new Ghost();
+		g.setPosition(x, y);
+		g.setEnergy(energy);
+		ghosts.add(g);
+		this.add(g);
+		// create the thread
+		Ghost_AI gai = new Ghost_AI(g);
+		Thread t_gai = new Thread(gai);
+		ghost_ai.add(t_gai);
+		t_gai.start();
+	}
+	
 	// safeguard mesure - for pack call in MainApp.java
 	@Override
 	public Dimension getPreferredSize()
@@ -286,8 +301,24 @@ public class World extends JPanel
 	// updates the pacman position in the map
 	public void update_pacman_position(int newX, int newY, int prevX, int prevY)
 	{
-		worldMap[newY][newX] = Constants.PACMAN;
-		worldMap[prevY][prevX] = Constants.FLOOR;
+		
+		
+		if (worldMap[newY][newX] == Constants.GHOST || worldMap[newY][newX] == Constants.SHOT)
+		{
+			Util.simpleTrace("Pacman is DEAD");
+		}
+		else
+		{	
+			worldMap[newY][newX] = Constants.PACMAN;
+			worldMap[prevY][prevX] = Constants.FLOOR;
+
+			if (nomnoms[newY][newX] == true)
+			{
+				nomnoms[newY][newX] = false;
+				this.score += 5;
+				Util.simpleTrace("Current Score = " + score);
+			}
+		}
 	}
 	
 	// updates a ghost position in the map
@@ -295,9 +326,7 @@ public class World extends JPanel
 	{
 		int retVal = worldMap[newY][newX];
 		worldMap[newY][newX] = Constants.GHOST;
-		
 		worldMap[prevY][prevX] = prevType;
-		
 		return retVal;
 	}
 	

@@ -128,10 +128,22 @@ public class Ghost extends MovableEntity
 	
 	/******************************************
 	 * 
+	 * Actuator Methods
+	 * 
+	 ******************************************/
+	
+	public void e_split()
+	{
+		// energy = energy - Constants.SPLIT_COST;
+		World.getInstance().spawnGhost(this.position_x, this.position_y, Constants.SPLIT_ENERGY);
+	}
+	
+	/******************************************
+	 * 
 	 * Sensor Methods
 	 * 
 	 ******************************************/
-	public int s_see_pacman ()
+	public int s_see_pacman()
 	{
 		return World.getInstance().see_pacman(this.position_x, this.position_y);
 	}
@@ -139,6 +151,14 @@ public class Ghost extends MovableEntity
         public int s_see_crystal ()
 	{
 		return World.getInstance().see_crystal(this.position_x, this.position_y);
+	}
+		
+	public boolean s_can_split()
+	{
+		//if (energy >= Constants.SPLIT_ENERGY)
+			//return true;
+		//return false;
+		return true;
 	}
 	
 	/******************************************
