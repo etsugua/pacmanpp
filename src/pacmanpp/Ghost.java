@@ -131,9 +131,14 @@ public class Ghost extends MovableEntity
 	 * Sensor Methods
 	 * 
 	 ******************************************/
-	public boolean s_see_pacman ()
+	public int s_see_pacman ()
 	{
 		return World.getInstance().see_pacman(this.position_x, this.position_y);
+	}
+        
+        public int s_see_crystal ()
+	{
+		return World.getInstance().see_crystal(this.position_x, this.position_y);
 	}
 	
 	/******************************************

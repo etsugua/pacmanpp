@@ -152,47 +152,93 @@ public class World extends JPanel
 	{
 		return (worldMap[y][x] == Constants.PACMAN);
 	}
+        public boolean isCrystal(int x, int y)
+	{
+		return (worldMap[y][x] == Constants.NOMNOM_CRYSTAL);
+	}
 	
-	public boolean see_pacman(int x, int y)
+	public int see_pacman(int x, int y)
 	{
 		
 		// check up
 		for (int i = 1; y-i >= 0; i++ )
 		{
-			if (this.isWall(x, y-i) || this.isGhost(x, y-i))
+			if (this.isWall(x, y-i) || this.isGhost(x, y-i) || this.isCrystal(x, y-i))
 				break;
 			else if (this.isPacman(x, y-i))
-				return true;
+				return Constants.UP;
 		}
 			
 		// check down
 		for (int i = 1; y+i < Constants.WORLD_HEIGHT; i++ )
 		{
-			if (this.isWall(x, y+i) || this.isGhost(x, y+i))
+			if (this.isWall(x, y+i) || this.isGhost(x, y+i) || this.isCrystal(x, y+i))
 				break;
 			else if (this.isPacman(x, y+i))
-				return true;
+				return Constants.DOWN;
 		}
 		
 		// check left
 		for (int i = 1; x-i >= 0; i++ )
 		{
-			if (this.isWall(x-i, y) || this.isGhost(x-i, y))
+			if (this.isWall(x-i, y) || this.isGhost(x-i, y)  || this.isCrystal(x-i, y))
 				break;
 			else if (this.isPacman(x-i, y))
-				return true;
+				return Constants.LEFT;
 		}
 			
 		// check right
 		for (int i = 1; x+i < Constants.WORLD_WIDTH; i++ )
 		{
-			if (this.isWall(x+i, y) || this.isGhost(x+i, y))
+			if (this.isWall(x+i, y) || this.isGhost(x+i, y) || this.isCrystal(x+i, y))
 				break;
 			else if (this.isPacman(x+i, y))
-				return true;
+				return Constants.RIGHT;
 		}
 		
-		return false;
+		return 0;
+	}
+        
+        public int see_crystal(int x, int y)
+	{
+		
+		// check up
+		for (int i = 1; y-i >= 0; i++ )
+		{
+			if (this.isWall(x, y-i) || this.isGhost(x, y-i) || this.isPacman(x, y-i))
+				break;
+			else if (this.isCrystal(x, y-i))
+				return Constants.UP;
+		}
+			
+		// check down
+		for (int i = 1; y+i < Constants.WORLD_HEIGHT; i++ )
+		{
+			if (this.isWall(x, y+i) || this.isGhost(x, y+i) || this.isPacman(x, y+i))
+				break;
+			else if (this.isCrystal(x, y+i))
+				return Constants.DOWN;
+		}
+		
+		// check left
+		for (int i = 1; x-i >= 0; i++ )
+		{
+			if (this.isWall(x-i, y) || this.isGhost(x-i, y) || this.isPacman(x-i, y))
+				break;
+			else if (this.isCrystal(x-i, y))
+				return Constants.LEFT;
+		}
+			
+		// check right
+		for (int i = 1; x+i < Constants.WORLD_WIDTH; i++ )
+		{
+			if (this.isWall(x+i, y) || this.isGhost(x+i, y) || this.isPacman(x+i, y))
+				break;
+			else if (this.isCrystal(x+i, y))
+				return Constants.RIGHT;
+		}
+		
+		return 0;
 	}
 	
 	/*
