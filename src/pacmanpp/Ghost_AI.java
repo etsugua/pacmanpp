@@ -30,6 +30,7 @@ public class Ghost_AI implements Runnable
 		{
 			if(ghost.getMustThink())
 			{
+				ghost.updateTimer();
 				int state = ghost.getGhostState();
 
 					// this ghost is NOT blue
@@ -39,8 +40,22 @@ public class Ghost_AI implements Runnable
 					int direction = ghost.s_see_pacman();
 					if (direction != 0)
 					{
-						// if energy for split
-							// split - move pacman direction - update sprite
+						ghost.setDirection(direction);
+						if (ghost.s_can_split())
+						{
+							ghost.e_split();
+							ghost.update_position();
+							ghost.update_sprite();
+						}
+						else if (ghost.s_can_shoot_pacman())
+						{
+							ghost.e_shot();
+						}
+						else
+						{
+							ghost.update_position();
+							ghost.update_sprite();
+						}
 						// else if energy for shot
 							// shot - update sprite
 						// else

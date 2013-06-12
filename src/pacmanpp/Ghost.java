@@ -26,6 +26,11 @@ public class Ghost extends MovableEntity
     // ghost energy
     protected int current_energy;
 	
+	// ghost timers
+	protected int shot_timer;
+	protected int split_timer;
+	
+	
 	/******************************************
 	 * 
 	 * Initialization Methods
@@ -39,7 +44,7 @@ public class Ghost extends MovableEntity
 		sprite_index = 0;
 		
 		this.current_state = Constants.SPAWN;
-                this.current_energy = Constants.INIT_ENERGY;
+		this.current_energy = Constants.MAX_ENERGY;
 		
 		// initialization of the movement direction
 		this.current_direction = 0;
@@ -51,6 +56,14 @@ public class Ghost extends MovableEntity
 		this.setVisible(true);
 		
 		this.tile_type = Constants.SPEC_FLOOR;
+		
+		shot_timer = 0;
+		split_timer = 0;
+	}
+	
+	public void setTileType (int type)
+	{
+		this.tile_type = type;
 	}
 	
 	private void initSprites()
@@ -64,9 +77,25 @@ public class Ghost extends MovableEntity
 		position_y = y;
 	}
 	
+	public int [] getPosition()
+	{
+		int [] ret = { position_x, position_y };
+		return ret;
+	}
+	
+	public void setDirection(int direction)
+	{
+		this.current_direction = direction;
+	}
+	
 	public void setEnergy(int energy)
 	{
 		this.current_energy = energy;
+	}
+	
+	public void getShot ()
+	{
+		this.current_energy = this.current_energy + Constants.SHOT_ENERGY_GAIN;
 	}
 	
 	public boolean getMustThink()
@@ -143,8 +172,15 @@ public class Ghost extends MovableEntity
 	
 	public void e_split()
 	{
-		// energy = energy - Constants.SPLIT_COST;
-		World.getInstance().spawnGhost(this.position_x, this.position_y, Constants.SPLIT_ENERGY);
+		this.current_energy = this.current_energy - Constants.SPLIT_ENERGY_COST;
+		World.getInstance().spawnGhost(this.position_x, this.position_y, this.tile_type);
+		this.split_timer = Constants.SPLIT_TIMER;
+	}
+	
+	public void e_shot()
+	{
+		World.getInstance().shoot(this.position_x, this.position_y, this.current_direction);
+		this.shot_timer = Constants.SHOT_TIMER;
 	}
 	
 	/******************************************
@@ -164,10 +200,24 @@ public class Ghost extends MovableEntity
 		
 	public boolean s_can_split()
 	{
-		//if (energy >= Constants.SPLIT_ENERGY)
-			//return true;
-		//return false;
-		return true;
+		if (this.current_energy >= Constants.SPLIT_ENERGY && this.split_timer == 0
+				&& this.checkDirection(this.current_direction))
+			return true;
+		return false;
+	}
+	
+	public boolean s_can_shoot_pacman()
+	{
+		if (this.current_energy >= Constants.SHOOT_PACMAN_ENERGY && this.shot_timer == 0)
+			return true;
+		return false;
+	}
+	
+	public boolean s_can_shoot_ghost()
+	{
+		if (this.current_energy >= Constants.SHOOT_GHOST_ENERGY && this.shot_timer == 0)
+			return true;
+		return false;
 	}
 	
 	/******************************************
@@ -191,11 +241,21 @@ public class Ghost extends MovableEntity
 					this.sprite_index++;
 				break;
 			case Constants.BLUE:
-				if (this.sprite_index == 3)
-					this.sprite_index = 0;
+				if (this.current_energy == 0)
+				{
+					if (this.sprite_index == 3)
+						this.sprite_index = 0;
+					else
+						this.sprite_index++;
+					break;
+				}
 				else
-					this.sprite_index++;
-				break;
+				{
+					Util.simpleTrace("Turn NORMAL!");
+					this.current_state = this.current_direction;
+					this.sprite_index = 0;
+					break;
+				}
 			case Constants.JOIN:
 				if (this.sprite_index == 2)
 				{
@@ -209,8 +269,18 @@ public class Ghost extends MovableEntity
 				break;
 			// else ghost is moving
 			default:
-				this.sprite_index = (this.sprite_index+1)%2;
-				break;
+				if (this.current_energy == 0)
+				{
+					Util.simpleTrace("Turn BLUE!");
+					this.current_state = Constants.BLUE;
+					this.sprite_index = 0;
+					break;
+				}
+				else
+				{
+					this.sprite_index = (this.sprite_index+1)%2;
+					break;
+				}
 		}
 	}
 	
@@ -261,7 +331,9 @@ public class Ghost extends MovableEntity
 				break;
 		}
 		
-		this.current_direction = newDirection.get(Util.random(newDirection.size()));
+		if (newDirection.size() > 0)
+			this.current_direction = newDirection.get(Util.random(newDirection.size()));
+		else this.current_direction = 0;
 		
 		if (this.current_state < Constants.BLUE && this.current_direction != this.current_state)
 		{
@@ -272,6 +344,12 @@ public class Ghost extends MovableEntity
 	
 	public void update_position()
 	{
+		
+		if (tile_type == Constants.SPEC_FLOOR)
+			this.current_energy += Constants.BASE_RECHARGE_ENERGY;
+		if (this.current_energy > Constants.MAX_ENERGY)
+			this.current_energy = Constants.MAX_ENERGY;
+		
 		int newx = position_x;
 		int newy = position_y;
 		
@@ -295,13 +373,22 @@ public class Ghost extends MovableEntity
                     break;
         }
 		
-            tile_type = World.getInstance().updateGhostPosition(newx, newy, position_x, position_y, tile_type);
+		tile_type = World.getInstance().updateGhostPosition(newx, newy, position_x, position_y, tile_type);
 		
-            position_x = newx;
-            position_y = newy;
+		position_x = newx;
+		position_y = newy;
 			
+		if (this.current_direction != 0)
 			this.current_energy--;
-        }
+	}
+	
+	public void updateTimer()
+	{
+		if (this.shot_timer > 0)
+			this.shot_timer--;
+		if (this.split_timer > 0)
+			this.split_timer--;
+	}
 	
 	@Override
 	public void paint(Graphics g)

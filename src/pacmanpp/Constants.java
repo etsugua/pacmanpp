@@ -59,10 +59,17 @@ public class Constants
 	protected static final int JOIN = 6;
 	
 	// ghost energy
-	protected static final int INIT_ENERGY = 100;
-	protected static final int SPLIT_INIT_ENERGY = 40;
+	protected static final int MAX_ENERGY = 100;
+	protected static final int BASE_RECHARGE_ENERGY = 20;
+	protected static final int SPLIT_INIT_ENERGY = 60;
 	protected static final int SPLIT_ENERGY = 50;
-	protected static final int SHOT_ENERGY = 1;
-	protected static final int SHOOT_PACMAN_ENERGY = 1; //necessary energy to shoot
-	protected static final int SHOOT_GHOST_ENERGY = 10; //necessary energy to shoot
+	protected static final int SPLIT_ENERGY_COST = 20;
+	protected static final int SHOT_ENERGY = 5;
+	protected static final int SHOT_ENERGY_GAIN = 10;
+	protected static final int SHOOT_PACMAN_ENERGY = 5; //necessary energy to shoot
+	protected static final int SHOOT_GHOST_ENERGY = 20; //necessary energy to shoot
+	
+	// ghost timers
+	protected static final int SHOT_TIMER = 3;
+	protected static final int SPLIT_TIMER = 5;
 }

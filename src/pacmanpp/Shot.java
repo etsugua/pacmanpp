@@ -26,16 +26,12 @@ public class Shot extends JComponent {
 	// game images for shot
 	private GameImages gim = null;
 	
-	// directions
-    private static final int UP = 1;
-    private static final int DOWN = 2;
-    private static final int LEFT = 3;
-    private static final int RIGHT = 4;
-	
 	private int grid_unit;
 	
-	World w;
-	Image shot_sprite;
+	private World w;
+	private Image shot_sprite;
+	
+	private boolean hit_something;
     
     public Shot(int dir, int x, int y)
 	{
@@ -45,49 +41,64 @@ public class Shot extends JComponent {
 		w = World.getInstance();
 		w.add(this);
 		
+		this.hit_something = false;
+		
 		this.setVisible(true);
-		this.setPosition(dir, x, y);
+		
+		position_x = x;
+		position_y = y;
     }
 	
-	public void setPosition(int dir, int x, int y)
+	public int [] getPosition()
 	{
-		int newx = x;
-		int newy = y;
-		switch(dir)
+		int [] ret = { this.position_x , this.position_y };
+		return ret;
+	}
+	
+	public boolean hitSomething()
+	{
+		return hit_something;
+	}
+	
+	public void updatePosition()
+	{
+		int newx = position_x;
+		int newy = position_y;
+		switch(direction)
 		{
-			case UP:
-				newy = y-1;
+			case Constants.UP:
+				newy = newy-1;
 				break;
-			case DOWN:
-				newy = y+1;
+			case Constants.DOWN:
+				newy = newy+1;
 				break;
-			case LEFT:
-				newx = x-1;
+			case Constants.LEFT:
+				newx = newx-1;
 				break;
-			case RIGHT:
-				newx = x+1;
+			case Constants.RIGHT:
+				newx = newx+1;
 				break;
 		}
 		
 		if (newx < 0 || newx > Constants.WORLD_WIDTH || w.isWall(newx,newy))
 		{
-			w.remove(this);
+			this.hit_something = true;
 		}
 		else if (w.isCrystal(newx, newy))
 		{
-			w.remove(this);
+			this.hit_something = true;
 			w.destroyCrystal(newx,newy);
 		}
 		else if(w.isGhost(newx, newy))
 		{
-			w.remove(this);
-			w.incGhostEnergy(newx, newy);
+			this.hit_something = true;
+			w.hitGhost(newx, newy);
 		}
 		else
 		{
 			if (w.isPacman(newx,newy))
 			{
-				w.remove(this);
+				this.hit_something = true;
 				w.hitPacman();
 			}
 			else
@@ -99,14 +110,13 @@ public class Shot extends JComponent {
 		
 	}
 	
-	public void move()
+	public void update()
 	{
-		setPosition(direction, position_x, position_y);
+		updatePosition();
 	}
     
     public void paint(Graphics g) {
-            this.move();
-			g.drawImage(gim.getShotSprite(), 0, 0, null);
+			g.drawImage(gim.getShotSprite(), Util.convertPosition(position_x), Util.convertPosition(position_y), null);
     }   
     
 }

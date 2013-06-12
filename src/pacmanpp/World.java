@@ -43,6 +43,9 @@ public class World extends JPanel
 	private ArrayList<Ghost> ghosts;
 	private ArrayList<Thread> ghost_ai;
 	
+	// instances of shot
+	private ArrayList<Shot> shots;
+	
 	private boolean ghost_ticker;
 	
 	public static World getInstance()
@@ -65,6 +68,7 @@ public class World extends JPanel
 
 		ghosts = new ArrayList<Ghost>();
 		ghost_ai = new ArrayList<Thread>();
+		shots = new ArrayList<Shot>();
 		
 		this.loadmap();
 		
@@ -127,19 +131,27 @@ public class World extends JPanel
 		}
 	}
 	
-	public void spawnGhost(int x, int y, int energy)
+	public void spawnGhost(int x, int y, int tileType)
 	{
 		// create the ghost
 		Ghost g = new Ghost();
 		g.setPosition(x, y);
-		g.setEnergy(energy);
+		g.setEnergy(Constants.SPLIT_INIT_ENERGY);
 		ghosts.add(g);
 		this.add(g);
+		g.setTileType(tileType);
 		// create the thread
 		Ghost_AI gai = new Ghost_AI(g);
 		Thread t_gai = new Thread(gai);
 		ghost_ai.add(t_gai);
 		t_gai.start();
+	}
+	
+	public void shoot(int x, int y, int direction)
+	{
+		Shot s = new Shot(direction, x, y);
+		this.add(s);
+		shots.add(s);
 	}
 	
 	// safeguard mesure - for pack call in MainApp.java
@@ -157,18 +169,37 @@ public class World extends JPanel
 		return (worldMap[y][x] == Constants.WALL);
 	}
 	
-	public boolean isGhost(int x, int y)
-	{
-		return (worldMap[y][x] == Constants.GHOST);
-	}
+	
 	
 	public boolean isPacman(int x, int y)
 	{
 		return (worldMap[y][x] == Constants.PACMAN);
 	}
-        public boolean isCrystal(int x, int y)
+	
+	public boolean isCrystal(int x, int y)
 	{
 		return (worldMap[y][x] == Constants.NOMNOM_CRYSTAL);
+	}
+	
+	public boolean isGhost(int x, int y)
+	{
+		return (worldMap[y][x] == Constants.GHOST);
+	}
+	
+	public void hitGhost(int x, int y)
+	{
+		for (Ghost g : ghosts)
+		{
+			if (g.getPosition()[0] == x && g.getPosition()[1] == y)
+			{
+				g.getShot();
+			}
+		}
+	}
+	
+	public void hitPacman()
+	{
+		Util.simpleTrace("Pacman is DEAD");
 	}
 	
 	public int see_pacman(int x, int y)
@@ -296,6 +327,25 @@ public class World extends JPanel
 			}
 		}
 		ghost_ticker = !ghost_ticker;
+		
+		int i = 0;
+		Shot [] removeShot = new Shot [5];
+		for (Shot shot : shots)
+		{
+			
+			shot.update();
+			
+			if (shot.hitSomething())
+				if (i <= 4)
+					removeShot[i++] = shot;
+		}
+		
+		if (i > 0)
+			for (int j = 0; j < i; j++)
+			{
+				this.remove(removeShot[j]);
+				shots.remove(removeShot[j]);
+			}
 	}
 	
 	// updates the pacman position in the map
@@ -308,7 +358,15 @@ public class World extends JPanel
 			Util.simpleTrace("Pacman is DEAD");
 		}
 		else
-		{	
+		{
+			
+			if(worldMap[newY][newX] == Constants.NOMNOM_CRYSTAL)
+			{
+				this.score += 50;
+				this.makeGhostsBlue();
+				Util.simpleTrace("Current Score = " + score);
+			}
+			
 			worldMap[newY][newX] = Constants.PACMAN;
 			worldMap[prevY][prevX] = Constants.FLOOR;
 
@@ -316,8 +374,17 @@ public class World extends JPanel
 			{
 				nomnoms[newY][newX] = false;
 				this.score += 5;
-				Util.simpleTrace("Current Score = " + score);
 			}
+		}
+	}
+	
+	public void makeGhostsBlue()
+	{
+		for (Ghost ghost : ghosts)
+		{
+			Util.simpleTrace("MAKE GHOSTS BLUE");
+			ghost.setEnergy(0);
+			ghost.update_sprite();
 		}
 	}
 	
@@ -336,14 +403,23 @@ public class World extends JPanel
 	{
 		// paint the world
 		g.drawImage(gim.getWorldSprite(), 0, 0, null);
+		
 		// paint the nomnoms
 		for (int i = 0; i < Constants.WORLD_WIDTH; i++)
 			for (int j = 0; j < Constants.WORLD_HEIGHT; j++)
 			{
 				if (nomnoms[j][i])
-					g.drawImage(gim.getNomNomSprites()[0], Util.convertPosition(i), Util.convertPosition(j), instance);
+					g.drawImage(gim.getNomNomSprites()[0], Util.convertPosition(i), Util.convertPosition(j), null);
 			}
-		//Util.simpleTrace("Paint NomNoms");
+		
+		// paint the crystal
+		for (int i = 0; i < Constants.WORLD_WIDTH; i++)
+			for (int j = 0; j < Constants.WORLD_HEIGHT; j++)
+			{
+				if (worldMap[j][i] == Constants.NOMNOM_CRYSTAL)
+					g.drawImage(gim.getNomNomSprites()[1], Util.convertPosition(i), Util.convertPosition(j), null);
+					
+			}
 		
 		// paint the pacman
 		p.paint(g);
@@ -355,19 +431,18 @@ public class World extends JPanel
 		}
 		
 		// paint the shots?
-		//Util.simpleTrace("Paint Shots?");
+		for (Shot shot : shots)
+		{
+			shot.paint(g);
+		}
 	}
 
-	void destroyCrystal(int newx, int newy) {
-		Util.simpleTrace("TO DO AUGUSTE");
+	void destroyCrystal(int x, int y)
+	{
+		this.worldMap[y][x] = Constants.FLOOR;
 	}
 
 	void incGhostEnergy(int newx, int newy) {
 		Util.simpleTrace("TO DO AUGUSTE");
 	}
-
-	void hitPacman() {
-		Util.simpleTrace("TO DO AUGUSTE");
-	}
-
 }
