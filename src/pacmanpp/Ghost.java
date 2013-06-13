@@ -1,7 +1,6 @@
 package pacmanpp;
 
 import java.awt.Graphics;
-import java.awt.Image;
 import java.util.ArrayList;
 
 /**
@@ -193,7 +192,7 @@ public class Ghost extends MovableEntity
 		return World.getInstance().see_pacman(this.position_x, this.position_y);
 	}
         
-        public int s_see_crystal ()
+    public int s_see_crystal()
 	{
 		return World.getInstance().see_crystal(this.position_x, this.position_y);
 	}

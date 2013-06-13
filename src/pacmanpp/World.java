@@ -352,10 +352,24 @@ public class World extends JPanel
 	public void update_pacman_position(int newX, int newY, int prevX, int prevY)
 	{
 		
-		
-		if (worldMap[newY][newX] == Constants.GHOST || worldMap[newY][newX] == Constants.SHOT)
+		if (worldMap[newY][newX] == Constants.SHOT)
 		{
 			Util.simpleTrace("Pacman is DEAD");
+		}		
+		else if (worldMap[newY][newX] == Constants.GHOST)
+		{
+			
+			Ghost ghost = see_ghost(newX,newY);
+			
+			if(ghost.getGhostState() == Constants.BLUE) 
+			{
+				//ghost.die();
+			}
+			else 
+			{
+				Util.simpleTrace("Pacman is DEAD");
+			}
+			
 		}
 		else
 		{
