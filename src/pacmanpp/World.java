@@ -202,6 +202,16 @@ public class World extends JPanel
 		Util.simpleTrace("Pacman is DEAD");
 	}
 	
+	public Ghost getGhost(int x, int y) 
+	{
+		for (Ghost ghost : ghosts)
+		{
+			if (ghost.getPosition()[0] == x && ghost.getPosition()[1] == y)
+				return ghost;
+		}
+		return null;
+	}
+	
 	public int see_pacman(int x, int y)
 	{
 		
@@ -423,7 +433,7 @@ public class World extends JPanel
 		else if (worldMap[newY][newX] == Constants.GHOST)
 		{
 			
-			Ghost ghost = see_ghost(newX,newY);
+			Ghost ghost = getGhost(newX,newY);
 			
 			if(ghost.getGhostState() == Constants.BLUE) 
 			{
