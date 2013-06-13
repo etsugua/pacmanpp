@@ -62,6 +62,14 @@ public class MainApp extends JFrame implements MouseListener, KeyListener
 				long newTimer = System.nanoTime();
 				if ((int)(newTimer - timer) / 1000000 > step)
 				{
+					World w1 = w.newGame();
+					if (w1 != w)
+					{
+						Util.simpleTrace("NEW GAME!");
+						this.remove(w);
+						w = w1;
+						this.add(w);
+					}
 					w.update();
 					w.repaint();
 					

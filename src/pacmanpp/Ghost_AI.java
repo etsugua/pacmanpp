@@ -2,6 +2,7 @@ package pacmanpp;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.omg.PortableInterceptor.DISCARDING;
 
 /**
  * Ghost_AI refers to the intelligence component of the movable
@@ -25,7 +26,6 @@ public class Ghost_AI implements Runnable
 	@Override
     public void run()
 	{
-		
 		while (true)
 		{
 			if(ghost.getMustThink())
@@ -35,8 +35,10 @@ public class Ghost_AI implements Runnable
 
 					// this ghost is NOT blue
 
-				if (state < Constants.BLUE)
+				//if (state < Constants.BLUE)
+				if (ghost.getEnergy() > 0)
 				{
+					// if see pacman
 					int direction = ghost.s_see_pacman();
 					if (direction != 0)
 					{
@@ -54,6 +56,7 @@ public class Ghost_AI implements Runnable
 					}
 					else
 					{
+						// else if see crystal
 						direction = ghost.s_see_crystal();
 						if (direction != 0)
 						{
@@ -70,29 +73,49 @@ public class Ghost_AI implements Runnable
 						}
 						else
 						{
+							// else if see ghost
 							Ghost g = ghost.s_see_ghost();
-							
+
 							if (g != null)
 							{
-								
+								if (g.getEnergy() == 0)
+								//if (g.getGhostState() == Constants.BLUE)
+								{
+									int distance = ghost.distanceTo(g.getPosition());
+									
+									if (distance > 1)
+									{
+										ghost.setDirection(g.getPosition());
+										ghost.update_position();
+										ghost.update_sprite();
+									}
+									else if (distance == 1)
+									{
+										ghost.setDirection(g.getPosition());
+										ghost.isColliding(g);
+										ghost.update_position();
+										ghost.update_sprite();
+									}
+								}
+								else
+								{
+									if (ghost.s_can_shoot_ghost())
+									{
+										ghost.setDirection(g.getPosition());
+										ghost.e_shot();
+										ghost.update_sprite();
+									}
+									else
+									{
+										ghost.update_direction();
+										ghost.update_position();
+										ghost.update_sprite();
+									}
+								}
 							}
-							
-						
-					
-
-					// else if see ghost
-						// if that ghost is blue
-							// if distance > 1
-								// move towards ghost
-							// else
-								// call for join
-						// if that ghost is close to blue and this one can shoot
-							// shoot once - update sprite (MUST HAVE SHOOT TIMER!)
-						// if that ghost is energy good and this one is close to blue
-							// wait for him - update sprite
-
 							else
 							{
+								// else normal behavior
 								ghost.update_direction();
 								ghost.update_position();
 								ghost.update_sprite();
@@ -104,12 +127,30 @@ public class Ghost_AI implements Runnable
 					// this ghost is blue
 				else
 				{
-					// if see pacman
-						// move opposite direction - update sprite
-					// if see ghost
-						// if that ghost is not blue
-							// if distance >= 1
-								// move towards him - update sprite
+					Ghost g = ghost.s_see_ghost();
+					if (g != null)
+					{
+						if (g.getEnergy() > 0)
+						//if(g.getGhostState() < Constants.BLUE)
+						{
+							if (ghost.distanceTo(g.getPosition()) > 1)
+							{
+								ghost.setDirection(g.getPosition());
+								ghost.update_position();
+								ghost.update_sprite();
+							}
+							else
+							{
+								ghost.update_sprite();
+							}
+						}
+					}
+					else
+					{
+						ghost.update_direction();
+						ghost.update_position();
+						ghost.update_sprite();
+					}
 				}
 
 				ghost.setMustThink(false);
@@ -123,6 +164,7 @@ public class Ghost_AI implements Runnable
 				catch (InterruptedException ex)
 				{
 					Util.simpleTrace(""+ex);
+					return;
 				}
 			}
 		}

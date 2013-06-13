@@ -29,6 +29,9 @@ public class Ghost extends MovableEntity
 	protected int shot_timer;
 	protected int split_timer;
 	
+	// ghost coliding
+	protected Ghost collideGhost;
+	
 	
 	/******************************************
 	 * 
@@ -38,12 +41,19 @@ public class Ghost extends MovableEntity
 	public Ghost()
 	{
 		
+		collideGhost = null;
+		
 		must_think = false;
 	
 		sprite_index = 0;
 		
 		this.current_state = Constants.SPAWN;
-		this.current_energy = Constants.MAX_ENERGY;
+		
+		Util.simpleTrace("Randomizing Energy Here");
+		if (Util.random(2) == 0)
+			this.current_energy = Constants.MAX_ENERGY;
+		else
+			this.current_energy = 0;
 		
 		// initialization of the movement direction
 		this.current_direction = 0;
@@ -85,6 +95,25 @@ public class Ghost extends MovableEntity
 	public void setDirection(int direction)
 	{
 		this.current_direction = direction;
+	}
+	
+	public void setDirection(int[] position)
+	{
+		if (this.position_x > position[0])
+			this.current_direction = Constants.LEFT;
+		else
+			this.current_direction = Constants.RIGHT;
+		
+		if (this.position_y > position[1])
+			this.current_direction = Constants.DOWN;
+		else
+			this.current_direction = Constants.UP;
+	}
+	
+	public void setState(int newState)
+	{
+		Util.simpleTrace("new state");
+		this.current_state = newState;
 	}
 	
 	public void setEnergy(int energy)
@@ -147,7 +176,7 @@ public class Ghost extends MovableEntity
 		return retVal;
 	}
 	
-	private int randomize_direction()
+	public int randomize_direction()
 	{
 		int decide_direction = 0;
 		for(;;)
@@ -158,9 +187,42 @@ public class Ghost extends MovableEntity
 		}
 	}
 	
+	public int getEnergy()
+	{
+		return this.current_energy;
+	}
+	
 	public int getGhostState()
 	{
 		return this.current_state;
+	}
+	
+	public int getTileType()
+	{
+		return this.tile_type;
+	}
+	
+	public void isColliding(Ghost g)
+	{
+		this.collideGhost = g;
+	}
+	
+	public int distanceTo(int[] position)
+	{
+		int distance = 0;
+		
+		if (this.position_x > position[0])
+			distance += (this.position_x - position[0]);
+		else
+			distance += (position[0] - this.position_x);
+		
+		if (this.position_y > position[1])
+			distance += (this.position_y - position[1]);
+		else
+			distance += (position[1] - this.position_y);
+		
+		return distance;
+		
 	}
 	
 	/******************************************
@@ -282,7 +344,7 @@ public class Ghost extends MovableEntity
 			default:
 				if (this.current_energy == 0)
 				{
-					Util.simpleTrace("Turn BLUE!");
+					Util.simpleTrace("turn blue");
 					this.current_state = Constants.BLUE;
 					this.sprite_index = 0;
 					break;
@@ -364,6 +426,21 @@ public class Ghost extends MovableEntity
 		int newx = position_x;
 		int newy = position_y;
 		
+		if (collideGhost != null)
+		{
+			this.position_x = collideGhost.getPosition()[0];
+			this.position_y = collideGhost.getPosition()[1];
+			
+			World.getInstance().killGhost(collideGhost);
+			World.getInstance().updateGhostPosition(newx, newy, position_x, position_y, tile_type);
+			
+			tile_type = collideGhost.getTileType();
+			
+			collideGhost = null;
+			
+			return;
+		}
+		
 		switch (this.current_direction)
         {
             case Constants.UP:
@@ -389,7 +466,7 @@ public class Ghost extends MovableEntity
 		position_x = newx;
 		position_y = newy;
 			
-		if (this.current_direction != 0)
+		if (this.current_direction != 0 && this.current_energy > 0)
 			this.current_energy--;
 	}
 	

@@ -48,6 +48,8 @@ public class World extends JPanel
 	
 	private boolean ghost_ticker;
 	
+	private boolean new_game;
+	
 	public static World getInstance()
 	{
 		if (instance == null)
@@ -57,6 +59,8 @@ public class World extends JPanel
 	
 	protected World() 
 	{
+		
+		this.new_game = false;
 		
 		this.setSize(PREF_SIZE);
 		
@@ -72,10 +76,10 @@ public class World extends JPanel
 		
 		this.loadmap();
 		
-		this.ghost_ticker = true;
+		this.ghost_ticker = false;
 	}
 	
-	private void loadmap ()
+	private synchronized void loadmap ()
 	{
 		try
 		{	
@@ -131,7 +135,7 @@ public class World extends JPanel
 		}
 	}
 	
-	public void spawnGhost(int x, int y, int tileType)
+	public synchronized void spawnGhost(int x, int y, int tileType)
 	{
 		// create the ghost
 		Ghost g = new Ghost();
@@ -147,7 +151,7 @@ public class World extends JPanel
 		t_gai.start();
 	}
 	
-	public void shoot(int x, int y, int direction)
+	public synchronized void shoot(int x, int y, int direction)
 	{
 		Shot s = new Shot(direction, x, y);
 		this.add(s);
@@ -166,6 +170,8 @@ public class World extends JPanel
 	 */
 	public boolean isWall(int x, int y)
 	{
+		if (x >= Constants.WORLD_WIDTH || x < 0)
+			return false;
 		return (worldMap[y][x] == Constants.WALL);
 	}
 	
@@ -186,7 +192,7 @@ public class World extends JPanel
 		return (worldMap[y][x] == Constants.GHOST);
 	}
 	
-	public void hitGhost(int x, int y)
+	public synchronized void hitGhost(int x, int y)
 	{
 		for (Ghost g : ghosts)
 		{
@@ -200,9 +206,10 @@ public class World extends JPanel
 	public void hitPacman()
 	{
 		Util.simpleTrace("Pacman is DEAD");
+		this.new_game = true;
 	}
 	
-	public Ghost getGhost(int x, int y) 
+	public synchronized Ghost getGhost(int x, int y) 
 	{
 		for (Ghost ghost : ghosts)
 		{
@@ -254,7 +261,7 @@ public class World extends JPanel
 		return 0;
 	}
     
-	public Ghost see_ghost(int x, int y)
+	public synchronized Ghost see_ghost(int x, int y)
 	{
 		for (Ghost ghost : ghosts)
 		{
@@ -360,6 +367,18 @@ public class World extends JPanel
 		return 0;
 	}
 	
+	public synchronized void killGhost(Ghost g)
+	{
+		int i = ghosts.indexOf(g);
+		Thread t = ghost_ai.get(i);
+		
+		t.interrupt();
+		ghost_ai.remove(t);
+		ghosts.remove(g);
+		
+		this.remove(g);
+	}
+	
 	/*
 	 * 
 	 * input treatment methods
@@ -378,12 +397,27 @@ public class World extends JPanel
 	 * 
 	 */
 	
+	public synchronized World newGame()
+	{
+		if ( this.new_game )
+		{
+			while (!ghosts.isEmpty())
+				killGhost(ghosts.get(0));
+			
+			this.removeAll();
+			instance = new World();
+		}
+		
+		
+		return instance;
+	}
+	
 	// updates important values like positions and deals with collision events
-	public void update()
+	public synchronized void update()
 	{
 		// player update
 		p.update();
-		
+
 		// ghost update
 		if (ghost_ticker)
 		{
@@ -401,19 +435,19 @@ public class World extends JPanel
 			}
 		}
 		ghost_ticker = !ghost_ticker;
-		
+
 		int i = 0;
 		Shot [] removeShot = new Shot [5];
 		for (Shot shot : shots)
 		{
-			
+
 			shot.update();
-			
+
 			if (shot.hitSomething())
 				if (i <= 4)
 					removeShot[i++] = shot;
 		}
-		
+
 		if (i > 0)
 			for (int j = 0; j < i; j++)
 			{
@@ -429,21 +463,27 @@ public class World extends JPanel
 		if (worldMap[newY][newX] == Constants.SHOT)
 		{
 			Util.simpleTrace("Pacman is DEAD");
+			this.new_game = true;
 		}		
 		else if (worldMap[newY][newX] == Constants.GHOST)
 		{
 			
 			Ghost ghost = getGhost(newX,newY);
 			
-			if(ghost.getGhostState() == Constants.BLUE) 
-			{
-				//ghost.die();
-			}
-			else 
-			{
-				Util.simpleTrace("Pacman is DEAD");
-			}
+			if(ghost == null)
+				worldMap[newY][newX] = Constants.FLOOR;
 			
+			else
+			{
+				if(ghost.getGhostState() == Constants.BLUE) 
+				{
+					this.killGhost(ghost);
+				}
+				else 
+				{
+					Util.simpleTrace("Pacman is DEAD");
+				}
+			}
 		}
 		else
 		{
@@ -466,11 +506,10 @@ public class World extends JPanel
 		}
 	}
 	
-	public void makeGhostsBlue()
+	public synchronized void makeGhostsBlue()
 	{
 		for (Ghost ghost : ghosts)
 		{
-			Util.simpleTrace("MAKE GHOSTS BLUE");
 			ghost.setEnergy(0);
 			ghost.update_sprite();
 		}
@@ -487,7 +526,7 @@ public class World extends JPanel
 	
 	// calls the draws to every component in this frame
 	@Override
-	public void paint(Graphics g)
+	public synchronized void paint(Graphics g)
 	{
 		// paint the world
 		g.drawImage(gim.getWorldSprite(), 0, 0, null);
