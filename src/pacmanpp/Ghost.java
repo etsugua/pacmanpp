@@ -220,6 +220,13 @@ public class Ghost extends MovableEntity
 		return false;
 	}
 	
+	public boolean s_can_shoot_crystal()
+	{
+		if (this.current_energy >= Constants.SHOOT_PACMAN_ENERGY && this.shot_timer == 0)
+			return true;
+		return false;
+	}
+	
 	/******************************************
 	 * 
 	 * Update Methods
