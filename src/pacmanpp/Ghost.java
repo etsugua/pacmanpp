@@ -192,11 +192,16 @@ public class Ghost extends MovableEntity
 		return World.getInstance().see_pacman(this.position_x, this.position_y);
 	}
         
-    public int s_see_crystal()
+	public int s_see_crystal ()
 	{
 		return World.getInstance().see_crystal(this.position_x, this.position_y);
 	}
-		
+	
+	public Ghost s_see_ghost ()
+	{
+		return World.getInstance().see_ghost(this.position_x, this.position_y);
+	}
+	
 	public boolean s_can_split()
 	{
 		if (this.current_energy >= Constants.SPLIT_ENERGY && this.split_timer == 0

@@ -243,8 +243,72 @@ public class World extends JPanel
 		
 		return 0;
 	}
-        
-        public int see_crystal(int x, int y)
+    
+	public Ghost see_ghost(int x, int y)
+	{
+		for (Ghost ghost : ghosts)
+		{
+			if (ghost.getPosition()[0] == x && ghost.getPosition()[1] == y)
+				continue;
+			
+			if (ghost.getPosition()[0] > x && ghost.getPosition()[1] == y)
+			{
+				for (int xi = ghost.getPosition()[0]; xi >= x; xi--)
+				{
+					if(xi == x)
+						return ghost;
+					else
+					{
+						if (this.isWall(xi, y) || this.isGhost(xi, y))
+							break;
+					}
+				}
+			}
+			else if (ghost.getPosition()[0] < x && ghost.getPosition()[1] == y)
+			{
+				for (int xi = ghost.getPosition()[0]; xi <= x; xi++)
+				{
+					if(xi == x)
+						return ghost;
+					else
+					{
+						if (this.isWall(xi, y) || this.isGhost(xi, y))
+							break;
+					}
+				}
+			}
+			else if (ghost.getPosition()[0] == x && ghost.getPosition()[1] < y)
+			{
+				for (int yi = ghost.getPosition()[1]; yi <= y; yi++)
+				{
+					if(yi == y)
+						return ghost;
+					else
+					{
+						if (this.isWall(x, yi) || this.isGhost(x, yi))
+							break;
+					}
+				}
+			}
+			else if (ghost.getPosition()[0] == x && ghost.getPosition()[1] > y)
+			{
+				for (int yi = ghost.getPosition()[1]; yi >= y; yi--)
+				{
+					if(yi == y)
+						return ghost;
+					else
+					{
+						if (this.isWall(x, yi) || this.isGhost(x, yi))
+							break;
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public int see_crystal(int x, int y)
 	{
 		
 		// check up
@@ -454,9 +518,5 @@ public class World extends JPanel
 	void destroyCrystal(int x, int y)
 	{
 		this.worldMap[y][x] = Constants.FLOOR;
-	}
-
-	void incGhostEnergy(int newx, int newy) {
-		Util.simpleTrace("TO DO AUGUSTE");
 	}
 }

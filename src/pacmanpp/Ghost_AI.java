@@ -41,26 +41,44 @@ public class Ghost_AI implements Runnable
 					if (direction != 0)
 					{
 						ghost.setDirection(direction);
+						ghost.update_sprite();
 						if (ghost.s_can_split())
 						{
 							ghost.e_split();
 							ghost.update_position();
-							ghost.update_sprite();
 						}
 						else if (ghost.s_can_shoot_pacman())
 						{
 							ghost.e_shot();
 						}
+					}
+					else
+					{
+						direction = ghost.s_see_crystal();
+						if (direction != 0)
+						{
+							ghost.setDirection(direction);
+							ghost.update_sprite();
+							if (ghost.s_can_shoot_crystal())
+							{
+								ghost.e_shot();
+							}
+							else
+							{
+								ghost.update_position();
+							}
+						}
 						else
 						{
-							ghost.update_position();
-							ghost.update_sprite();
-						}
-						// else if energy for shot
-							// shot - update sprite
-						// else
-							// move pacman direction - update sprite
-					}
+							Ghost g = ghost.s_see_ghost();
+							
+							if (g != null)
+							{
+								
+							}
+							
+						
+					
 
 					// else if see ghost
 						// if that ghost is blue
@@ -73,11 +91,13 @@ public class Ghost_AI implements Runnable
 						// if that ghost is energy good and this one is close to blue
 							// wait for him - update sprite
 
-					else
-					{
-						ghost.update_direction();
-						ghost.update_position();
-						ghost.update_sprite();
+							else
+							{
+								ghost.update_direction();
+								ghost.update_position();
+								ghost.update_sprite();
+							}
+						}
 					}
 				}
 
