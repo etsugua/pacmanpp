@@ -263,16 +263,26 @@ public class World extends JPanel
     
 	public synchronized Ghost see_ghost(int x, int y)
 	{
+		int i = -1;
 		for (Ghost ghost : ghosts)
 		{
+			i++;
 			if (ghost.getPosition()[0] == x && ghost.getPosition()[1] == y)
 				continue;
 			
+			if (ghost.getPosition()[0] != x && ghost.getPosition()[1] != y)
+				continue;
+			
+			System.out.println("Compare with Ghost #"+i);
+			System.out.println("x Compare: ("+ghost.getPosition()[0]+") , ("+x+")");
+			System.out.println("y Compare: ("+ghost.getPosition()[1]+") , ("+y+")");
+			
 			if (ghost.getPosition()[0] > x && ghost.getPosition()[1] == y)
 			{
-				for (int xi = ghost.getPosition()[0]; xi >= x; xi--)
+				int xmax = ghost.getPosition()[0];
+				for (int xi = x+1; xi <= xmax; xi++)
 				{
-					if(xi == x)
+					if(xi == xmax)
 						return ghost;
 					else
 					{
@@ -283,7 +293,7 @@ public class World extends JPanel
 			}
 			else if (ghost.getPosition()[0] < x && ghost.getPosition()[1] == y)
 			{
-				for (int xi = ghost.getPosition()[0]; xi <= x; xi++)
+				for (int xi = ghost.getPosition()[0]+1; xi <= x; xi++)
 				{
 					if(xi == x)
 						return ghost;
@@ -296,7 +306,7 @@ public class World extends JPanel
 			}
 			else if (ghost.getPosition()[0] == x && ghost.getPosition()[1] < y)
 			{
-				for (int yi = ghost.getPosition()[1]; yi <= y; yi++)
+				for (int yi = ghost.getPosition()[1]+1; yi <= y; yi++)
 				{
 					if(yi == y)
 						return ghost;
@@ -309,9 +319,10 @@ public class World extends JPanel
 			}
 			else if (ghost.getPosition()[0] == x && ghost.getPosition()[1] > y)
 			{
-				for (int yi = ghost.getPosition()[1]; yi >= y; yi--)
+				int ymax = ghost.getPosition()[1];
+				for (int yi = y+1; yi <= ymax; yi++)
 				{
-					if(yi == y)
+					if(yi == ymax)
 						return ghost;
 					else
 					{
@@ -564,8 +575,28 @@ public class World extends JPanel
 		}
 	}
 
-	void destroyCrystal(int x, int y)
+	public void destroyCrystal(int x, int y)
 	{
 		this.worldMap[y][x] = Constants.FLOOR;
+	}
+	
+	public synchronized void printMAP()
+	{
+		for (int i = 0; i < Constants.WORLD_HEIGHT; i++)
+		{
+			for (int j = 0; j < Constants.WORLD_WIDTH; j++)
+			{
+				System.out.print("  " + this.worldMap[i][j]);
+			}
+			System.out.println();
+		}
+		
+		int i = 0;
+		for (Ghost ghost : ghosts)
+		{
+			System.out.println("Ghost #"+i++ + " Position = "+ghost.getPosition()[0]+","+ghost.getPosition()[1]);
+		}
+		
+		
 	}
 }

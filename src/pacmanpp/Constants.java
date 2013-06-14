@@ -70,6 +70,6 @@ public class Constants
 	protected static final int SHOOT_GHOST_ENERGY = 20; //necessary energy to shoot
 	
 	// ghost timers
-	protected static final int SHOT_TIMER = 3;
-	protected static final int SPLIT_TIMER = 5;
+	protected static final int SHOT_TIMER = 12;
+	protected static final int SPLIT_TIMER = 24;
 }

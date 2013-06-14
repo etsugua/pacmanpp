@@ -51,9 +51,15 @@ public class Ghost extends MovableEntity
 		
 		Util.simpleTrace("Randomizing Energy Here");
 		if (Util.random(2) == 0)
+		{
+			Util.simpleTrace("	is max energy");
 			this.current_energy = Constants.MAX_ENERGY;
+		}
 		else
+		{
+			Util.simpleTrace("	is 0 energy");
 			this.current_energy = 0;
+		}
 		
 		// initialization of the movement direction
 		this.current_direction = 0;
@@ -64,7 +70,9 @@ public class Ghost extends MovableEntity
 
 		this.setVisible(true);
 		
-		this.tile_type = Constants.SPEC_FLOOR;
+		Util.simpleTrace("Floor -> SpecFloor");
+		this.tile_type = Constants.FLOOR;
+		//this.tile_type = Constants.SPEC_FLOOR;
 		
 		shot_timer = 0;
 		split_timer = 0;
@@ -101,13 +109,13 @@ public class Ghost extends MovableEntity
 	{
 		if (this.position_x > position[0])
 			this.current_direction = Constants.LEFT;
-		else
+		else if (this.position_x < position[0])
 			this.current_direction = Constants.RIGHT;
 		
 		if (this.position_y > position[1])
-			this.current_direction = Constants.DOWN;
-		else
 			this.current_direction = Constants.UP;
+		else if (this.position_y < position[1])
+			this.current_direction = Constants.DOWN;
 	}
 	
 	public void setState(int newState)
@@ -178,7 +186,7 @@ public class Ghost extends MovableEntity
 	
 	public int randomize_direction()
 	{
-		int decide_direction = 0;
+		int decide_direction;
 		for(;;)
 		{
 			decide_direction = 1+Util.random(4);
@@ -437,6 +445,8 @@ public class Ghost extends MovableEntity
 			tile_type = collideGhost.getTileType();
 			
 			collideGhost = null;
+			
+			this.current_state = Constants.JOIN;
 			
 			return;
 		}

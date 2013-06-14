@@ -132,6 +132,9 @@ public class MainApp extends JFrame implements MouseListener, KeyListener
 			case KeyEvent.VK_M:
 			//	w.switchSound();
 				break;
+			case KeyEvent.VK_Q:
+				w.printMAP();
+				break;
 		}
 	}
 }

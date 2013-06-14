@@ -42,6 +42,7 @@ public class Ghost_AI implements Runnable
 					int direction = ghost.s_see_pacman();
 					if (direction != 0)
 					{
+						Util.simpleTrace("Saw Pacman");
 						ghost.setDirection(direction);
 						ghost.update_sprite();
 						if (ghost.s_can_split())
@@ -60,6 +61,7 @@ public class Ghost_AI implements Runnable
 						direction = ghost.s_see_crystal();
 						if (direction != 0)
 						{
+							Util.simpleTrace("Saw Crystal");
 							ghost.setDirection(direction);
 							ghost.update_sprite();
 							if (ghost.s_can_shoot_crystal())
@@ -78,19 +80,27 @@ public class Ghost_AI implements Runnable
 
 							if (g != null)
 							{
+								
+								Util.simpleTrace("Saw Ghost");
+								
 								if (g.getEnergy() == 0)
 								//if (g.getGhostState() == Constants.BLUE)
 								{
+									
+									Util.simpleTrace("Saw Blue Ghost");
+									
 									int distance = ghost.distanceTo(g.getPosition());
 									
 									if (distance > 1)
 									{
+										Util.simpleTrace("dist > 1");
 										ghost.setDirection(g.getPosition());
 										ghost.update_position();
 										ghost.update_sprite();
 									}
 									else if (distance == 1)
 									{
+										Util.simpleTrace("dist = 1");
 										ghost.setDirection(g.getPosition());
 										ghost.isColliding(g);
 										ghost.update_position();
@@ -99,6 +109,8 @@ public class Ghost_AI implements Runnable
 								}
 								else
 								{
+									Util.simpleTrace("Normal Ghost");
+									
 									if (ghost.s_can_shoot_ghost())
 									{
 										ghost.setDirection(g.getPosition());
@@ -115,6 +127,7 @@ public class Ghost_AI implements Runnable
 							}
 							else
 							{
+								Util.simpleTrace("NONE");
 								// else normal behavior
 								ghost.update_direction();
 								ghost.update_position();
@@ -133,20 +146,31 @@ public class Ghost_AI implements Runnable
 						if (g.getEnergy() > 0)
 						//if(g.getGhostState() < Constants.BLUE)
 						{
+							Util.simpleTrace("Blue Ghost saw Normal Ghost");
 							if (ghost.distanceTo(g.getPosition()) > 1)
 							{
+								Util.simpleTrace(">	the normal ghost is at > 1");
 								ghost.setDirection(g.getPosition());
 								ghost.update_position();
 								ghost.update_sprite();
 							}
 							else
 							{
+								Util.simpleTrace(">	the normal ghost is = 1");
 								ghost.update_sprite();
 							}
+						}
+						else
+						{
+							Util.simpleTrace("Blue Ghost saw Blue Ghost");
+							ghost.update_direction();
+							ghost.update_position();
+							ghost.update_sprite();
 						}
 					}
 					else
 					{
+						Util.simpleTrace("NONE - 2");
 						ghost.update_direction();
 						ghost.update_position();
 						ghost.update_sprite();
