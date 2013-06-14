@@ -50,6 +50,8 @@ public class World extends JPanel
 	
 	private boolean new_game;
 	
+	private int agent_type;
+	
 	public static World getInstance()
 	{
 		if (instance == null)
@@ -59,6 +61,7 @@ public class World extends JPanel
 	
 	protected World() 
 	{
+		this.agent_type = Constants.ACTIVE;
 		
 		this.new_game = false;
 		
@@ -115,7 +118,21 @@ public class World extends JPanel
 							ghosts.add(g);
 							this.add(g);
 							// create the thread
-							Ghost_AI gai = new Ghost_AI(g);
+							Runnable gai = null;
+							switch(this.agent_type)
+							{
+								case Constants.REACTIVE:
+									gai = new Ghost_AI(g);
+									break;
+								case Constants.DELIBERATIVE:
+									gai = new Ghost_AI_BDI(g);
+									break;
+								case Constants.HYBRID:
+									Util.simpleTrace("Hybrid - ToDo");
+						//			gai = new Ghost_AI_Hybrid(g);
+									break;
+							}
+							
 							Thread t_gai = new Thread(gai);
 							ghost_ai.add(t_gai);
 							t_gai.start();
@@ -145,7 +162,21 @@ public class World extends JPanel
 		this.add(g);
 		g.setTileType(tileType);
 		// create the thread
-		Ghost_AI gai = new Ghost_AI(g);
+		Runnable gai = null;
+		switch(this.agent_type)
+		{
+			case Constants.REACTIVE:
+				gai = new Ghost_AI(g);
+				break;
+			case Constants.DELIBERATIVE:
+				gai = new Ghost_AI_BDI(g);
+				break;
+			case Constants.HYBRID:
+				Util.simpleTrace("Hybrid - ToDo");
+		//		gai = new Ghost_AI_Hybrid(g);
+				break;
+		}
+							
 		Thread t_gai = new Thread(gai);
 		ghost_ai.add(t_gai);
 		t_gai.start();
@@ -273,9 +304,9 @@ public class World extends JPanel
 			if (ghost.getPosition()[0] != x && ghost.getPosition()[1] != y)
 				continue;
 			
-			System.out.println("Compare with Ghost #"+i);
+			/*System.out.println("Compare with Ghost #"+i);
 			System.out.println("x Compare: ("+ghost.getPosition()[0]+") , ("+x+")");
-			System.out.println("y Compare: ("+ghost.getPosition()[1]+") , ("+y+")");
+			System.out.println("y Compare: ("+ghost.getPosition()[1]+") , ("+y+")");*/
 			
 			if (ghost.getPosition()[0] > x && ghost.getPosition()[1] == y)
 			{
@@ -488,11 +519,13 @@ public class World extends JPanel
 			{
 				if(ghost.getGhostState() == Constants.BLUE) 
 				{
+					this.score += 100;
 					this.killGhost(ghost);
 				}
 				else 
 				{
 					Util.simpleTrace("Pacman is DEAD");
+					this.new_game = true;
 				}
 			}
 		}
@@ -503,7 +536,7 @@ public class World extends JPanel
 			{
 				this.score += 50;
 				this.makeGhostsBlue();
-				Util.simpleTrace("Current Score = " + score);
+				//Util.simpleTrace("Current Score = " + score);
 			}
 			
 			worldMap[newY][newX] = Constants.PACMAN;
@@ -575,8 +608,18 @@ public class World extends JPanel
 		}
 	}
 
-	public void destroyCrystal(int x, int y)
+	public synchronized void destroyCrystal(int x, int y)
 	{
+		for (Ghost ghost : ghosts)
+		{
+			int energy = ghost.getEnergy();
+			energy += Constants.MAX_ENERGY/2;
+			if (energy > Constants.MAX_ENERGY)
+				energy = Constants.MAX_ENERGY;
+			
+			ghost.setEnergy(energy);
+		}
+		
 		this.worldMap[y][x] = Constants.FLOOR;
 	}
 	

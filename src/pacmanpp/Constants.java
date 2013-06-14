@@ -7,6 +7,14 @@ package pacmanpp;
  */
 public class Constants
 {
+	
+	// Type of Agent to use
+	protected static final int REACTIVE = 0;
+	protected static final int DELIBERATIVE = 1;
+	protected static final int HYBRID = 2;
+	// Current agent type
+	protected static final int ACTIVE = REACTIVE;
+	
 	// size of the grid
 	protected static final int GRID_UNIT = 20;
 	

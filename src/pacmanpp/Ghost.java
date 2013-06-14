@@ -220,16 +220,16 @@ public class Ghost extends MovableEntity
 		int distance = 0;
 		
 		if (this.position_x > position[0])
-			distance += (this.position_x - position[0]);
+			distance += (int)Math.pow(this.position_x - position[0],2);
 		else
-			distance += (position[0] - this.position_x);
+			distance += (int)Math.pow(position[0] - this.position_x,2);
 		
 		if (this.position_y > position[1])
-			distance += (this.position_y - position[1]);
+			distance += (int)Math.pow(this.position_y - position[1],2);
 		else
-			distance += (position[1] - this.position_y);
+			distance += (int)Math.pow(position[1] - this.position_y,2);
 		
-		return distance;
+		return (int)Math.sqrt(distance);
 		
 	}
 	
@@ -332,7 +332,6 @@ public class Ghost extends MovableEntity
 				}
 				else
 				{
-					Util.simpleTrace("Turn NORMAL!");
 					this.current_state = this.current_direction;
 					this.sprite_index = 0;
 					break;
@@ -352,7 +351,6 @@ public class Ghost extends MovableEntity
 			default:
 				if (this.current_energy == 0)
 				{
-					Util.simpleTrace("turn blue");
 					this.current_state = Constants.BLUE;
 					this.sprite_index = 0;
 					break;
