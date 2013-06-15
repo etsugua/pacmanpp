@@ -47,8 +47,11 @@ public class Ghost_AI_BDI implements Runnable
 		ghost = g;
 	}
 	
-	public void setInitValues(int[] pmPos,int pmTick,int[] bluePos, int blueTick, ArrayList<int[]> parentPath)
+	public void setInitValues(int[] pmPos,int pmTick,int[] bluePos, int blueTick, ArrayList<int[]> parentPath, int parentSplitTimer)
 	{
+		
+		ghost.setSplitTimer(parentSplitTimer);
+		
 		if(pmTick > 0)
 		{
 			knowPacman = true;
@@ -97,8 +100,15 @@ public class Ghost_AI_BDI implements Runnable
 	{
 		if (blueTicker > 0)
 			blueTicker--;
+		
+		if (blueTicker == 0)
+			resetBluePosition(null);
+		
 		if (pacmanTicker > 0)
 			pacmanTicker--;
+		
+		if (pacmanTicker == 0)
+			resetPacmanPosition(null);
 	}
 	
 	public int energyLevel()
@@ -126,13 +136,15 @@ public class Ghost_AI_BDI implements Runnable
 	}
 	
 	@Override
-    public void run()
+    public synchronized void run()
 	{
 		while(true)
 		{
 			if (ghost.getMustThink())
 			{
 				this.messageTicker();
+				
+				ghost.updateTimer();
 				
 				int[] keys = new int [2];
 				int[] directions = new int [2];
@@ -150,7 +162,7 @@ public class Ghost_AI_BDI implements Runnable
 					if (direction != 0)
 					{
 						CommunicationModule.getInstance().notifyGhosts(Constants.MSG_PACMAN, World.getInstance().getPacmanPosition());
-						this.resetPacmanPosition(World.getInstance().getPacmanPosition());
+						this.resetPacmanPosition(null);
 						keys[key] = Constants.BDI_SEE_PACMAN;
 						directions[key++] = direction;
 					}
@@ -170,7 +182,7 @@ public class Ghost_AI_BDI implements Runnable
 						{
 							if (g.getGhostState() == Constants.BLUE)
 							{
-								this.resetBluePosition(g.getPosition());
+								this.resetBluePosition(null);
 								keys[key] = Constants.BDI_SEE_BLUE;
 								directions[key++] = direction;
 							}
@@ -239,8 +251,6 @@ public class Ghost_AI_BDI implements Runnable
 				// else ghost is blue
 				else
 				{
-					Util.simpleTrace("GHOST is BLUE");
-					
 					this.resetBluePosition(null);
 					this.resetPacmanPosition(null);
 					
@@ -303,7 +313,7 @@ public class Ghost_AI_BDI implements Runnable
 		ghost.update_sprite();
 	}
 
-	private int execute(int[] keys, int[] directions, int energyKey)
+	private synchronized int execute(int[] keys, int[] directions, int energyKey)
 	{
 		
 		if (energyKey == 3)
@@ -317,7 +327,7 @@ public class Ghost_AI_BDI implements Runnable
 				if (ghost.s_can_split())
 				{
 					Ghost_AI_BDI son = (Ghost_AI_BDI)ghost.e_split().getRunnable();
-					son.setInitValues(pacmanPosition, pacmanTicker, bluePosition, blueTicker, path);
+					son.setInitValues(pacmanPosition, pacmanTicker, bluePosition, blueTicker, path, ghost.getSplitTimer());
 					ghost.update_position();
 					ghost.update_sprite();
 					return 0;

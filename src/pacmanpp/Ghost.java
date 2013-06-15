@@ -78,6 +78,16 @@ public class Ghost extends MovableEntity
 		split_timer = 0;
 	}
 	
+	public void setSplitTimer(int t)
+	{
+		this.split_timer = t;
+	}
+	
+	public int getSplitTimer()
+	{
+		return this.split_timer;
+	}
+	
 	public void setTileType (int type)
 	{
 		this.tile_type = type;
@@ -299,7 +309,8 @@ public class Ghost extends MovableEntity
 	public boolean s_can_split()
 	{
 		if (this.current_energy >= Constants.SPLIT_ENERGY && this.split_timer == 0
-				&& this.checkDirection(this.current_direction))
+				&& this.checkDirection(this.current_direction)
+				&& World.getInstance().getGhosts().size() < Constants.NUM_MAX_GHOST)
 			return true;
 		return false;
 	}
@@ -431,7 +442,7 @@ public class Ghost extends MovableEntity
 			this.current_direction = newDirection.get(Util.random(newDirection.size()));
 		else this.randomize_direction();
 		
-		if (this.current_state < Constants.BLUE && this.current_direction != this.current_state)
+		if (this.current_state < Constants.BLUE && this.current_direction != this.current_state && this.current_direction != 0)
 		{
 			this.current_state = this.current_direction;
 		}

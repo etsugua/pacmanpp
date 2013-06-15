@@ -5,6 +5,8 @@
 package pacmanpp;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CommunicationModule
 {
@@ -20,8 +22,8 @@ public class CommunicationModule
 	public synchronized void notifyGhosts(int msg_type, int[] position)
 	{
 		World w = World.getInstance();
-		ArrayList<Ghost> ghosts = w.getGhosts();
-		ArrayList<NuThread> ghost_ai = w.getGhostAIs();
+		List<Ghost> ghosts = Collections.synchronizedList(w.getGhosts());
+		List<NuThread> ghost_ai = Collections.synchronizedList(w.getGhostAIs());
 		
 		for(Ghost ghost : ghosts)
 		{
@@ -31,7 +33,8 @@ public class CommunicationModule
 				switch (msg_type)
 				{
 					case Constants.MSG_PACMAN:
-						gai.notifyPacmanPosition(position);
+						if (ghost.s_see_pacman() == 0)
+							gai.notifyPacmanPosition(position);
 						break;
 					case Constants.MSG_BLUE:
 						gai.notifyBluePosition(position);

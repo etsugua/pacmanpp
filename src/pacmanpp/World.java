@@ -1,5 +1,6 @@
 package pacmanpp;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.io.FileReader;
@@ -80,6 +81,8 @@ public class World extends JPanel
 		this.loadmap();
 		
 		this.ghost_ticker = false;
+		
+		this.score = 0;
 	}
 	
 	private synchronized void loadmap ()
@@ -184,12 +187,12 @@ public class World extends JPanel
 		return t_gai;
 	}
 	
-	public ArrayList<Ghost> getGhosts()
+	public synchronized ArrayList<Ghost> getGhosts()
 	{
 		return ghosts;
 	}
 	
-	public ArrayList<NuThread> getGhostAIs()
+	public synchronized ArrayList<NuThread> getGhostAIs()
 	{
 		return ghost_ai;
 	}
@@ -500,7 +503,6 @@ public class World extends JPanel
 	{
 		this.cleanGhosts();
 		
-		
 		// player update
 		p.update();
 
@@ -653,6 +655,10 @@ public class World extends JPanel
 		{
 			shot.paint(g);
 		}
+		
+		g.setFont(gim.getScoreFont());
+		g.setColor(Color.YELLOW);
+		g.drawString("SCORE: "+score, Constants.INFO_TOPX * Constants.GRID_UNIT + 6*Constants.GRID_UNIT, Constants.INFO_TOPY * Constants.GRID_UNIT + 3*Constants.GRID_UNIT/2);
 	}
 
 	public synchronized void destroyCrystal(int x, int y)

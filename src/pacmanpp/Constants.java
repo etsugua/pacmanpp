@@ -13,7 +13,7 @@ public class Constants
 	protected static final int DELIBERATIVE = 1;
 	protected static final int HYBRID = 2;
 	// Current agent type
-	protected static final int ACTIVE = REACTIVE;
+	protected static final int ACTIVE = DELIBERATIVE;
 	
 	// size of the grid
 	protected static final int GRID_UNIT = 20;
@@ -67,16 +67,16 @@ public class Constants
 	protected static final int JOIN = 6;
 	
 	// ghost energy
-	protected static final int MAX_ENERGY = 100;
+	protected static final int MAX_ENERGY = 120;
 	protected static final int BASE_RECHARGE_ENERGY = 20;
 	protected static final int SPLIT_INIT_ENERGY = 60;
-	protected static final int SPLIT_ENERGY = 50;
-	protected static final int SPLIT_ENERGY_COST = 20;
+	protected static final int SPLIT_ENERGY = 60;
+	protected static final int SPLIT_ENERGY_COST = 30;
 	protected static final int SHOT_ENERGY = 5;
 	protected static final int SHOT_ENERGY_GAIN = 10;
 	protected static final int SHOOT_PACMAN_ENERGY = 5; //necessary energy to shoot
 	protected static final int SHOOT_GHOST_ENERGY = 20; //necessary energy to shoot
-	protected static final int MOVEMENT_ENERGY = 1; //necessary energy to shoot
+	protected static final int MOVEMENT_ENERGY = 2; //necessary energy to shoot
 	
 	// ghost timers
 	protected static final int SHOT_TIMER = 6;
@@ -85,10 +85,12 @@ public class Constants
 	// message types
 	protected static final int MSG_PACMAN = 0;
 	protected static final int MSG_BLUE = 1;
-	protected static final int MSG_TIMER = 10;
+	protected static final int MSG_TIMER = 12;
 	// message radius
 	protected static final int MSG_NOTIFY_RADIUS = 14;
 	
+	// num max ghosts in play
+	protected static final int NUM_MAX_GHOST = 10;
 	
 	// BDI Deliberation Keys
 	protected static final int BDI_SEE_PACMAN = 0;
@@ -102,8 +104,8 @@ public class Constants
 	protected static final int BDI_ENERGY_NORMAL = 1;
 	protected static final int BDI_ENERGY_LOW = 2;
 	// BDI Energy Level Configuration
-	protected static final int ENERGY_HIGH = 60;
-	protected static final int ENERGY_NORMAL = 15;
+	protected static final int ENERGY_HIGH = 80;
+	protected static final int ENERGY_NORMAL = 20;
 	protected static final int ENERGY_LOW = 1;
 	// BDI Decision Values
 	protected static final int BDI_SPLIT = 0;
