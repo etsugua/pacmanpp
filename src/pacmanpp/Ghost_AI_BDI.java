@@ -248,9 +248,15 @@ public class Ghost_AI_BDI implements Runnable
 					
 					if (limit > 0)
 					{
-						ghost.setDirection(path.get(limit-1));
-						if (ghost.checkDirection(ghost.getDirection(path.get(limit-1))))
+						int direction = ghost.getDirection(path.get(limit-1));
+						if (ghost.getPosition()[0] == 0 && path.get(limit-1)[0] == Constants.WORLD_WIDTH-1)
+							direction = Constants.LEFT;
+						else if (ghost.getPosition()[0] == Constants.WORLD_WIDTH-1 && path.get(limit-1)[0] == 0)
+							direction = Constants.RIGHT;
+						
+						if (ghost.checkDirection(direction))
 						{
+							ghost.setDirection(direction);
 							ghost.update_position();
 							path = new ArrayList<int[]>(path.subList(0, limit));
 						}

@@ -33,40 +33,39 @@ public class Ghost_AI implements Runnable
 				ghost.updateTimer();
 				int state = ghost.getGhostState();
 
-					// this ghost is NOT blue
-
-				if (state < Constants.BLUE)
-				//if (ghost.getEnergy() > 0)
+				if (ghost.getTileType() == Constants.SPEC_FLOOR)
 				{
-					// if see pacman
-					int direction = ghost.s_see_pacman();
-					if (direction != 0)
+					if(ghost.checkDirection(Constants.UP) && ghost.getEnergy() >= Constants.ENERGY_HIGH)
 					{
-						ghost.setDirection(direction);
-						ghost.update_sprite();
-						if (ghost.s_can_split())
-						{
-							ghost.e_split();
-							ghost.update_position();
-						}
-						else if (ghost.s_can_shoot_pacman())
-						{
-							ghost.e_shot();
-						}
-						else
-						{
-							ghost.update_position();
-						}
+						ghost.setDirection(Constants.UP);
 					}
 					else
 					{
-						// else if see crystal
-						direction = ghost.s_see_crystal();
+						ghost.randomize_direction();
+					}
+					ghost.update_position();
+					ghost.update_sprite();
+				}
+				
+				else
+				{
+						// this ghost is NOT blue
+
+					if (state < Constants.BLUE)
+					//if (ghost.getEnergy() > 0)
+					{
+						// if see pacman
+						int direction = ghost.s_see_pacman();
 						if (direction != 0)
 						{
 							ghost.setDirection(direction);
 							ghost.update_sprite();
-							if (ghost.s_can_shoot_crystal())
+							if (ghost.s_can_split())
+							{
+								ghost.e_split();
+								ghost.update_position();
+							}
+							else if (ghost.s_can_shoot_pacman())
 							{
 								ghost.e_shot();
 							}
@@ -77,74 +76,98 @@ public class Ghost_AI implements Runnable
 						}
 						else
 						{
-							// else if see ghost
-							Ghost g = ghost.s_see_ghost();
-
-							if (g != null)
+							// else if see crystal
+							direction = ghost.s_see_crystal();
+							if (direction != 0)
 							{
-								//if (g.getEnergy() == 0)
-								if (g.getGhostState() == Constants.BLUE)
-								{									
-									int distance = ghost.distanceTo(g.getPosition());
-									
-									if (distance > 1)
-									{
-										ghost.setDirection(g.getPosition());
-										ghost.update_position();
-										ghost.update_sprite();
+								ghost.setDirection(direction);
+								ghost.update_sprite();
+								if (ghost.s_can_shoot_crystal())
+								{
+									ghost.e_shot();
+								}
+								else
+								{
+									ghost.update_position();
+								}
+							}
+							else
+							{
+								// else if see ghost
+								Ghost g = ghost.s_see_ghost();
+
+								if (g != null)
+								{
+									//if (g.getEnergy() == 0)
+									if (g.getGhostState() == Constants.BLUE)
+									{									
+										int distance = ghost.distanceTo(g.getPosition());
+
+										if (distance > 1)
+										{
+											ghost.setDirection(g.getPosition());
+											ghost.update_position();
+											ghost.update_sprite();
+										}
+										else if (distance == 1)
+										{
+											ghost.setDirection(g.getPosition());
+											ghost.isColliding(g);
+											ghost.update_position();
+											ghost.update_sprite();
+										}
 									}
-									else if (distance == 1)
+									else
 									{
-										ghost.setDirection(g.getPosition());
-										ghost.isColliding(g);
-										ghost.update_position();
-										ghost.update_sprite();
+										if (ghost.s_can_shoot_ghost())
+										{
+											ghost.setDirection(g.getPosition());
+											ghost.e_shot();
+											ghost.update_sprite();
+										}
+										else
+										{
+											ghost.update_direction();
+											ghost.update_position();
+											ghost.update_sprite();
+										}
 									}
 								}
 								else
 								{
-									if (ghost.s_can_shoot_ghost())
-									{
-										ghost.setDirection(g.getPosition());
-										ghost.e_shot();
-										ghost.update_sprite();
-									}
-									else
-									{
-										ghost.update_direction();
-										ghost.update_position();
-										ghost.update_sprite();
-									}
+									// else normal behavior
+									ghost.update_direction();
+									ghost.update_position();
+									ghost.update_sprite();
+								}
+							}
+						}
+					}
+
+						// this ghost is blue
+					else
+					{
+						Ghost g = ghost.s_see_ghost();
+						if (g != null)
+						{
+							//if (g.getEnergy() > 0)
+							if(g.getGhostState() < Constants.BLUE)
+							{
+								if (ghost.distanceTo(g.getPosition()) > 1)
+								{
+									ghost.setDirection(g.getPosition());
+									ghost.update_position();
+									ghost.update_sprite();
+								}
+								else
+								{
+									ghost.update_sprite();
 								}
 							}
 							else
 							{
-								// else normal behavior
 								ghost.update_direction();
 								ghost.update_position();
-								ghost.update_sprite();
-							}
-						}
-					}
-				}
-
-					// this ghost is blue
-				else
-				{
-					Ghost g = ghost.s_see_ghost();
-					if (g != null)
-					{
-						//if (g.getEnergy() > 0)
-						if(g.getGhostState() < Constants.BLUE)
-						{
-							if (ghost.distanceTo(g.getPosition()) > 1)
-							{
-								ghost.setDirection(g.getPosition());
-								ghost.update_position();
-								ghost.update_sprite();
-							}
-							else
-							{
 								ghost.update_sprite();
 							}
 						}
@@ -155,14 +178,7 @@ public class Ghost_AI implements Runnable
 							ghost.update_sprite();
 						}
 					}
-					else
-					{
-						ghost.update_direction();
-						ghost.update_position();
-						ghost.update_sprite();
-					}
 				}
-
 				ghost.setMustThink(false);
 			}
 			else

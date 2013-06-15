@@ -13,7 +13,7 @@ public class Constants
 	protected static final int DELIBERATIVE = 1;
 	protected static final int HYBRID = 2;
 	// Current agent type
-	protected static final int ACTIVE = DELIBERATIVE;
+	protected static final int ACTIVE = REACTIVE;
 	
 	// size of the grid
 	protected static final int GRID_UNIT = 20;
@@ -76,7 +76,7 @@ public class Constants
 	protected static final int SHOT_ENERGY_GAIN = 10;
 	protected static final int SHOOT_PACMAN_ENERGY = 5; //necessary energy to shoot
 	protected static final int SHOOT_GHOST_ENERGY = 20; //necessary energy to shoot
-	protected static final int MOVEMENT_ENERGY = 2; //necessary energy to shoot
+	protected static final int MOVEMENT_ENERGY = 1; //necessary energy to shoot
 	
 	// ghost timers
 	protected static final int SHOT_TIMER = 6;

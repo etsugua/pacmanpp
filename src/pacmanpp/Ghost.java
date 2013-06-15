@@ -363,6 +363,7 @@ public class Ghost extends MovableEntity
 			case Constants.JOIN:
 				if (this.sprite_index == 2)
 				{
+					this.tile_type = Constants.FLOOR;
 					this.sprite_index = 0;
 					this.current_state = this.randomize_direction();
 					this.current_direction = this.current_state;
@@ -428,7 +429,7 @@ public class Ghost extends MovableEntity
 		
 		if (newDirection.size() > 0)
 			this.current_direction = newDirection.get(Util.random(newDirection.size()));
-		else this.current_direction = 0;
+		else this.randomize_direction();
 		
 		if (this.current_state < Constants.BLUE && this.current_direction != this.current_state)
 		{

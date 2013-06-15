@@ -435,6 +435,8 @@ public class World extends JPanel
 		ghost_ai.remove(t);
 		ghosts.remove(g);
 		
+		this.worldMap[g.getPosition()[1]][g.getPosition()[0]] = Constants.FLOOR;
+		
 		this.remove(g);
 	}
 	
@@ -471,9 +473,34 @@ public class World extends JPanel
 		return instance;
 	}
 	
+	public void cleanGhosts()
+	{
+		for (int j = 0; j < Constants.WORLD_HEIGHT; j++)
+			for (int i = 0; i < Constants.WORLD_WIDTH; i++)
+			{
+				if (this.worldMap[j][i] == Constants.GHOST)
+				{
+					boolean foundGhost = false;
+					for (Ghost ghost : ghosts)
+					{
+						if (ghost.getPosition()[0] == i && ghost.getPosition()[1] == j)
+						{
+							foundGhost = true;
+							break;
+						}
+					}
+					if (!foundGhost)
+						this.worldMap[j][i] = Constants.FLOOR;
+				}
+			}
+	}
+	
 	// updates important values like positions and deals with collision events
 	public synchronized void update()
 	{
+		this.cleanGhosts();
+		
+		
 		// player update
 		p.update();
 
