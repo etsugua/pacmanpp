@@ -41,7 +41,7 @@ public class World extends JPanel
 	
 	// instances of ghosts and their threads
 	private ArrayList<Ghost> ghosts;
-	private ArrayList<Thread> ghost_ai;
+	private ArrayList<NuThread> ghost_ai;
 	
 	// instances of shot
 	private ArrayList<Shot> shots;
@@ -74,7 +74,7 @@ public class World extends JPanel
 		this.add(p);
 
 		ghosts = new ArrayList<Ghost>();
-		ghost_ai = new ArrayList<Thread>();
+		ghost_ai = new ArrayList<NuThread>();
 		shots = new ArrayList<Shot>();
 		
 		this.loadmap();
@@ -133,7 +133,7 @@ public class World extends JPanel
 									break;
 							}
 							
-							Thread t_gai = new Thread(gai);
+							NuThread t_gai = new NuThread(gai);
 							ghost_ai.add(t_gai);
 							t_gai.start();
 						}
@@ -152,7 +152,7 @@ public class World extends JPanel
 		}
 	}
 	
-	public synchronized void spawnGhost(int x, int y, int tileType)
+	public synchronized NuThread spawnGhost(int x, int y, int tileType)
 	{
 		// create the ghost
 		Ghost g = new Ghost();
@@ -177,9 +177,26 @@ public class World extends JPanel
 				break;
 		}
 							
-		Thread t_gai = new Thread(gai);
+		NuThread t_gai = new NuThread(gai);
 		ghost_ai.add(t_gai);
 		t_gai.start();
+		
+		return t_gai;
+	}
+	
+	public ArrayList<Ghost> getGhosts()
+	{
+		return ghosts;
+	}
+	
+	public ArrayList<NuThread> getGhostAIs()
+	{
+		return ghost_ai;
+	}
+	
+	public int[] getPacmanPosition()
+	{
+		return p.getPosition();
 	}
 	
 	public synchronized void shoot(int x, int y, int direction)
@@ -535,7 +552,7 @@ public class World extends JPanel
 			if(worldMap[newY][newX] == Constants.NOMNOM_CRYSTAL)
 			{
 				this.score += 50;
-				this.makeGhostsBlue();
+				this.hurtGhosts();
 				//Util.simpleTrace("Current Score = " + score);
 			}
 			
@@ -550,11 +567,14 @@ public class World extends JPanel
 		}
 	}
 	
-	public synchronized void makeGhostsBlue()
+	public synchronized void hurtGhosts()
 	{
 		for (Ghost ghost : ghosts)
 		{
-			ghost.setEnergy(0);
+			int newEnergy = ghost.getEnergy()-(Constants.MAX_ENERGY/2);
+			if (newEnergy < 0)
+				newEnergy = 0;
+			ghost.setEnergy(newEnergy);
 			ghost.update_sprite();
 		}
 	}
@@ -637,7 +657,7 @@ public class World extends JPanel
 		int i = 0;
 		for (Ghost ghost : ghosts)
 		{
-			System.out.println("Ghost #"+i++ + " Position = "+ghost.getPosition()[0]+","+ghost.getPosition()[1]);
+			System.out.println("Ghost #"+i++ + "Energy = " + ghost.getEnergy() + " Position = "+ghost.getPosition()[0]+","+ghost.getPosition()[1]);
 		}
 		
 		

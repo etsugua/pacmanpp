@@ -80,7 +80,7 @@ public class Shot extends JComponent {
 				break;
 		}
 		
-		if (newx < 0 || newx > Constants.WORLD_WIDTH || w.isWall(newx,newy))
+		if (newx < 0 || newx >= Constants.WORLD_WIDTH || w.isWall(newx,newy))
 		{
 			this.hit_something = true;
 		}

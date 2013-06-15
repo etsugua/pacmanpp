@@ -13,7 +13,7 @@ public class Constants
 	protected static final int DELIBERATIVE = 1;
 	protected static final int HYBRID = 2;
 	// Current agent type
-	protected static final int ACTIVE = REACTIVE;
+	protected static final int ACTIVE = DELIBERATIVE;
 	
 	// size of the grid
 	protected static final int GRID_UNIT = 20;
@@ -76,8 +76,51 @@ public class Constants
 	protected static final int SHOT_ENERGY_GAIN = 10;
 	protected static final int SHOOT_PACMAN_ENERGY = 5; //necessary energy to shoot
 	protected static final int SHOOT_GHOST_ENERGY = 20; //necessary energy to shoot
+	protected static final int MOVEMENT_ENERGY = 2; //necessary energy to shoot
 	
 	// ghost timers
-	protected static final int SHOT_TIMER = 12;
-	protected static final int SPLIT_TIMER = 24;
+	protected static final int SHOT_TIMER = 6;
+	protected static final int SPLIT_TIMER = 20;
+	
+	// message types
+	protected static final int MSG_PACMAN = 0;
+	protected static final int MSG_BLUE = 1;
+	protected static final int MSG_TIMER = 10;
+	// message radius
+	protected static final int MSG_NOTIFY_RADIUS = 14;
+	
+	
+	// BDI Deliberation Keys
+	protected static final int BDI_SEE_PACMAN = 0;
+	protected static final int BDI_SEE_GHOST = 1;
+	protected static final int BDI_SEE_BLUE = 2;
+	protected static final int BDI_SEE_CRYSTAL = 3;
+	protected static final int BDI_PACMAN_CLOSE = 4;
+	protected static final int BDI_BLUE_CLOSE = 5;
+	// BDI Deliberation Second Key
+	protected static final int BDI_ENERGY_HIGH = 0;
+	protected static final int BDI_ENERGY_NORMAL = 1;
+	protected static final int BDI_ENERGY_LOW = 2;
+	// BDI Energy Level Configuration
+	protected static final int ENERGY_HIGH = 60;
+	protected static final int ENERGY_NORMAL = 15;
+	protected static final int ENERGY_LOW = 1;
+	// BDI Decision Values
+	protected static final int BDI_SPLIT = 0;
+	protected static final int BDI_JOIN = 1;
+	protected static final int BDI_SHOOT_PACMAN = 2;
+	protected static final int BDI_SHOOT_GHOST = 3;
+	protected static final int BDI_SHOOT_BLUE = 4;
+	protected static final int BDI_SHOOT_CRYSTAL = 5;
+	protected static final int BDI_MOVE_PACMAN = 6;
+	protected static final int BDI_MOVE_BLUE = 7;
+	protected static final int BDI_MOVE = 8;
+	
+	
+	
+	
+	
+	
+	
+	
 }

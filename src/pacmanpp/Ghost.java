@@ -49,17 +49,17 @@ public class Ghost extends MovableEntity
 		
 		this.current_state = Constants.SPAWN;
 		
-		Util.simpleTrace("Randomizing Energy Here");
-		if (Util.random(2) == 0)
-		{
-			Util.simpleTrace("	is max energy");
+		//Util.simpleTrace("Randomizing Energy Here");
+		//if (Util.random(2) == 0)
+		//{
+		//	Util.simpleTrace("	is max energy");
 			this.current_energy = Constants.MAX_ENERGY;
-		}
-		else
-		{
-			Util.simpleTrace("	is 0 energy");
-			this.current_energy = 0;
-		}
+		//}
+		//else
+		//{
+		//	Util.simpleTrace("	is 0 energy");
+		//	this.current_energy = 0;
+		//}
 		
 		// initialization of the movement direction
 		this.current_direction = 0;
@@ -71,8 +71,8 @@ public class Ghost extends MovableEntity
 		this.setVisible(true);
 		
 		Util.simpleTrace("Floor -> SpecFloor");
-		this.tile_type = Constants.FLOOR;
-		//this.tile_type = Constants.SPEC_FLOOR;
+		//this.tile_type = Constants.FLOOR;
+		this.tile_type = Constants.SPEC_FLOOR;
 		
 		shot_timer = 0;
 		split_timer = 0;
@@ -118,6 +118,20 @@ public class Ghost extends MovableEntity
 			this.current_direction = Constants.DOWN;
 	}
 	
+	public int getDirection(int[] position)
+	{
+		if (this.position_x > position[0])
+			return Constants.LEFT;
+		else if (this.position_x < position[0])
+			return Constants.RIGHT;
+		
+		if (this.position_y > position[1])
+			return Constants.UP;
+		else if (this.position_y < position[1])
+			return Constants.DOWN;
+		return 0;
+	}
+	
 	public void setState(int newState)
 	{
 		Util.simpleTrace("new state");
@@ -144,6 +158,11 @@ public class Ghost extends MovableEntity
 		must_think = b;
 	}
 	
+	public boolean isCloseTo(int [] position)
+	{
+		return (this.distanceTo(position) < Constants.MSG_NOTIFY_RADIUS);
+	}
+	
 	/******************************************
 	 * 
 	 * Generic Methods
@@ -151,7 +170,7 @@ public class Ghost extends MovableEntity
 	 ******************************************/
 	
 	@Override
-	protected boolean checkDirection(int checkDir)
+	protected synchronized boolean checkDirection(int checkDir)
 	{
 		int check_x = position_x;
 		int check_y = position_y;
@@ -170,6 +189,9 @@ public class Ghost extends MovableEntity
 			case Constants.RIGHT:
 				check_x++;
 				break;
+			case 0:
+				return false;
+				
 		}
 		
 		if (check_x == -1)
@@ -187,12 +209,13 @@ public class Ghost extends MovableEntity
 	public int randomize_direction()
 	{
 		int decide_direction;
-		for(;;)
+		for(int i = 0; i < 20; i++)
 		{
 			decide_direction = 1+Util.random(4);
 			if (checkDirection(decide_direction))
 				return decide_direction;
 		}
+		return 0;
 	}
 	
 	public int getEnergy()
@@ -239,11 +262,12 @@ public class Ghost extends MovableEntity
 	 * 
 	 ******************************************/
 	
-	public void e_split()
+	public NuThread e_split()
 	{
 		this.current_energy = this.current_energy - Constants.SPLIT_ENERGY_COST;
-		World.getInstance().spawnGhost(this.position_x, this.position_y, this.tile_type);
+		NuThread thread = World.getInstance().spawnGhost(this.position_x, this.position_y, this.tile_type);
 		this.split_timer = Constants.SPLIT_TIMER;
+		return thread;
 	}
 	
 	public void e_shot()
@@ -363,7 +387,7 @@ public class Ghost extends MovableEntity
 		}
 	}
 	
-	public void update_direction()
+	public synchronized void update_direction()
 	{
 		ArrayList<Integer> newDirection = new ArrayList<Integer>();
 		switch (this.current_direction)
@@ -371,8 +395,6 @@ public class Ghost extends MovableEntity
 			case Constants.UP:
 				if (checkDirection(Constants.UP))
 					newDirection.add(Constants.UP);
-				else if (checkDirection(Constants.DOWN))
-					newDirection.add(Constants.DOWN);
 				if (checkDirection(Constants.LEFT))
 					newDirection.add(Constants.LEFT);
 				if (checkDirection(Constants.RIGHT))
@@ -381,8 +403,6 @@ public class Ghost extends MovableEntity
 			case Constants.DOWN:
 				if (checkDirection(Constants.DOWN))
 					newDirection.add(Constants.DOWN);
-				else if (checkDirection(Constants.UP))
-					newDirection.add(Constants.UP);
 				if (checkDirection(Constants.LEFT))
 					newDirection.add(Constants.LEFT);
 				if (checkDirection(Constants.RIGHT))
@@ -391,8 +411,6 @@ public class Ghost extends MovableEntity
 			case Constants.LEFT:
 				if (checkDirection(Constants.LEFT))
 					newDirection.add(Constants.LEFT);
-				else if (checkDirection(Constants.RIGHT))
-					newDirection.add(Constants.RIGHT);
 				if (checkDirection(Constants.UP))
 					newDirection.add(Constants.UP);
 				if (checkDirection(Constants.DOWN))
@@ -401,8 +419,6 @@ public class Ghost extends MovableEntity
 			case Constants.RIGHT:
 				if (checkDirection(Constants.RIGHT))
 					newDirection.add(Constants.RIGHT);
-				else if (checkDirection(Constants.LEFT))
-					newDirection.add(Constants.LEFT);
 				if (checkDirection(Constants.UP))
 					newDirection.add(Constants.UP);
 				if (checkDirection(Constants.DOWN))
@@ -421,7 +437,7 @@ public class Ghost extends MovableEntity
 		
 	}
 	
-	public void update_position()
+	public synchronized void update_position()
 	{
 		
 		if (tile_type == Constants.SPEC_FLOOR)
@@ -437,6 +453,8 @@ public class Ghost extends MovableEntity
 			this.position_x = collideGhost.getPosition()[0];
 			this.position_y = collideGhost.getPosition()[1];
 			
+			this.current_energy = Constants.MAX_ENERGY;
+			
 			World.getInstance().killGhost(collideGhost);
 			World.getInstance().updateGhostPosition(newx, newy, position_x, position_y, tile_type);
 			
@@ -448,6 +466,9 @@ public class Ghost extends MovableEntity
 			
 			return;
 		}
+		
+		if(!this.checkDirection(this.current_direction))
+			return;
 		
 		switch (this.current_direction)
         {
@@ -473,9 +494,11 @@ public class Ghost extends MovableEntity
 		
 		position_x = newx;
 		position_y = newy;
-			
-		if (this.current_direction != 0 && this.current_energy > 0)
-			this.current_energy--;
+		
+		this.current_energy -= Constants.MOVEMENT_ENERGY;
+		
+		if (this.current_energy < 0)
+			this.current_energy = 0;
 	}
 	
 	public void updateTimer()
